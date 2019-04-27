@@ -135,7 +135,7 @@ func (lex *Lexer) GetToken() (*Token, error) {
 	case ')':
 		tok.Code = TokCLOSEPARENS
 	default:
-		return nil, fmt.Errorf("Unrecoginsed token: %v", lex.currentRune)
+		return nil, fmt.Errorf("Unrecoginsed token: %q", lex.currentRune)
 	}
 
 	// Move to the next rune
