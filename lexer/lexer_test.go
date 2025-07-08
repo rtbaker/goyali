@@ -108,7 +108,7 @@ func TestBadFloat(t *testing.T) {
 
 	if err == nil {
 		t.Errorf("Lexer GetToken should have returned an error but did not")
-	} else if err.Error() != "Double '.' in number" {
+	} else if err.Error() != "double '.' in number" {
 		t.Errorf("Lexer GetToken did not return the correct error string: %s", err)
 	}
 }
@@ -168,7 +168,7 @@ func TestChar(t *testing.T) {
 
 	if err == nil {
 		t.Errorf("Lexer GetToken should have returned an error but did not")
-	} else if err.Error() != "Unrecognised token: '@'" {
+	} else if err.Error() != "unrecognised token: '@'" {
 		t.Errorf("Lexer GetToken did not return the correct error string: %s", err)
 	}
 }

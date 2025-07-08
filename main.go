@@ -10,16 +10,14 @@ import (
 
 func main() {
 	//reader := bufio.NewReader(os.Stdin)
-	reader := bufio.NewReader(strings.NewReader("    abcdefg abc(dfdf)/2+"))
+	reader := bufio.NewReader(strings.NewReader("    abcdefg abc(dfdf)/2+\n {base, val}"))
 	lex := lexer.NewLexer(reader)
-
-	fmt.Println("Start typing: ")
 
 	var token *lexer.Token
 	var err error
 
 	for token, err = lex.GetToken(); err == nil && token.Code != lexer.EOF; {
-		token.PrintToken()
+		fmt.Println(token)
 
 		// Get next
 		token, err = lex.GetToken()

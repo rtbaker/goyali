@@ -20,6 +20,7 @@ const (
 	STRING
 	OPENPARENS
 	CLOSEPARENS
+	COMMA
 )
 
 // Token A single token from the lexer
@@ -28,6 +29,51 @@ type Token struct {
 	IntValue    int64
 	FloatValue  float64
 	StringValue string
+	Line        int
+	Position    int
+}
+
+func (tok *Token) String() string {
+	var name string
+	var val string
+
+	switch tok.Code {
+	case EOF:
+		name = "EOF"
+	case INT:
+		name = "INT"
+		val = fmt.Sprintf("%d", tok.IntValue)
+	case FLOAT:
+		name = "FLOAT"
+		val = fmt.Sprintf("%f", tok.FloatValue)
+	case PLUS:
+		name = "PLUS"
+	case MINUS:
+		name = "MINUS"
+	case MULTIPLY:
+		name = "MULTIPLY"
+	case DIVIDE:
+		name = "DIVIDE"
+	case OPENBRACE:
+		name = "OPENBRACE"
+	case CLOSEBRACE:
+		name = "CLOSEBRACE"
+	case OPENPARENS:
+		name = "OPENPARENS"
+	case CLOSEPARENS:
+		name = "CLOSEPARENS"
+	case COMMA:
+		name = "COMMA"
+	case STRING:
+		name = "STRING"
+		val = tok.StringValue
+	}
+
+	if val != "" {
+		return fmt.Sprintf("%s: %s\t\t\t(Line %d, position %d)", name, val, tok.Line, tok.Position)
+	}
+
+	return fmt.Sprintf("%s\t\t\t(Line %d, position %d)", name, tok.Line, tok.Position)
 }
 
 // PrintToken Pretty print the token for debugging

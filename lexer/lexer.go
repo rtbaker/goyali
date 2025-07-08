@@ -13,6 +13,8 @@ type Lexer struct {
 	in          *bufio.Reader
 	currentRune rune
 	eof         bool
+	pos         int
+	line        int
 }
 
 // NewLexer Create a new Lexer
@@ -22,8 +24,15 @@ func NewLexer(input *bufio.Reader) *Lexer {
 	l.in = input
 	l.currentRune = ' '
 	l.eof = false
+	l.pos = 0
+	l.line = 1
 
 	return l
+}
+
+func (lex *Lexer) ReadRune() (rune, int, error) {
+	lex.pos++
+	return lex.in.ReadRune()
 }
 
 // GetToken Get the next Token from the stream
@@ -39,8 +48,18 @@ func (lex *Lexer) GetToken() (*Token, error) {
 
 	// Eat whitespace at beginning of buffer
 	if unicode.IsSpace(lex.currentRune) {
-		for lex.currentRune, _, err = lex.in.ReadRune(); unicode.IsSpace(lex.currentRune) && err == nil; {
-			lex.currentRune, _, err = lex.in.ReadRune()
+		if lex.currentRune == '\n' {
+			lex.line++
+			lex.pos = 0
+		}
+
+		for lex.currentRune, _, err = lex.ReadRune(); unicode.IsSpace(lex.currentRune) && err == nil; {
+			if lex.currentRune == '\n' {
+				lex.line++
+				lex.pos = 0
+			}
+
+			lex.currentRune, _, err = lex.ReadRune()
 		}
 	}
 
@@ -57,12 +76,16 @@ func (lex *Lexer) GetToken() (*Token, error) {
 	// Is alpha
 	if unicode.IsLetter(lex.currentRune) {
 		tok.Code = STRING
+		tok.Line = lex.line
+		tok.Position = lex.pos
+
 		var str = string(lex.currentRune)
 
 		// Slurp letters and numbers up to something else
-		for lex.currentRune, _, err = lex.in.ReadRune(); (unicode.IsLetter(lex.currentRune) || unicode.IsNumber(lex.currentRune)) && err == nil; {
+		lex.currentRune, _, err = lex.ReadRune()
+		for (unicode.IsLetter(lex.currentRune) || unicode.IsNumber(lex.currentRune)) && err == nil {
 			str = str + string(lex.currentRune)
-			lex.currentRune, _, err = lex.in.ReadRune()
+			lex.currentRune, _, err = lex.ReadRune()
 		}
 
 		if err != nil && err.Error() == "EOF" {
@@ -79,20 +102,25 @@ func (lex *Lexer) GetToken() (*Token, error) {
 	// number
 	if unicode.IsNumber(lex.currentRune) {
 		var isFloat = false
+		tok.Line = lex.line
+		tok.Position = lex.pos
+
 		var str = string(lex.currentRune)
 
-		for lex.currentRune, _, err = lex.in.ReadRune(); (unicode.IsNumber(lex.currentRune) == true || lex.currentRune == '.') && err == nil; {
+		lex.currentRune, _, err = lex.ReadRune()
+
+		for (unicode.IsNumber(lex.currentRune) || lex.currentRune == '.') && err == nil {
 			if lex.currentRune == '.' {
 				if isFloat {
 					// Hmm we've seen a . already error !
-					return nil, errors.New("Double '.' in number")
+					return nil, errors.New("double '.' in number")
 				}
 
 				isFloat = true
 			}
 
 			str = str + string(lex.currentRune)
-			lex.currentRune, _, err = lex.in.ReadRune()
+			lex.currentRune, _, err = lex.ReadRune()
 
 		}
 
@@ -115,6 +143,8 @@ func (lex *Lexer) GetToken() (*Token, error) {
 	}
 
 	// Single char tokens, set the value if the token we created at the top
+	tok.Line = lex.line
+	tok.Position = lex.pos
 
 	// plus
 	switch lex.currentRune {
@@ -134,12 +164,14 @@ func (lex *Lexer) GetToken() (*Token, error) {
 		tok.Code = OPENPARENS
 	case ')':
 		tok.Code = CLOSEPARENS
+	case ',':
+		tok.Code = COMMA
 	default:
-		return nil, fmt.Errorf("Unrecognised token: %q", lex.currentRune)
+		return nil, fmt.Errorf("unrecognised token: %q", lex.currentRune)
 	}
 
 	// Move to the next rune
-	lex.currentRune, _, err = lex.in.ReadRune()
+	lex.currentRune, _, err = lex.ReadRune()
 
 	if err != nil && err.Error() == "EOF" {
 		lex.eof = true
