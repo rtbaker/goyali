@@ -29,7 +29,7 @@ func NewLexer(input *bufio.Reader) *Lexer {
 // GetToken Get the next Token from the stream
 func (lex *Lexer) GetToken() (*Token, error) {
 	tok := new(Token)
-	tok.Code = TokEOF
+	tok.Code = EOF
 
 	if lex.eof {
 		return tok, nil
@@ -56,10 +56,10 @@ func (lex *Lexer) GetToken() (*Token, error) {
 
 	// Is alpha
 	if unicode.IsLetter(lex.currentRune) {
-		tok.Code = TokSTRING
+		tok.Code = STRING
 		var str = string(lex.currentRune)
 
-		// Slurp letters and numbers upto something else
+		// Slurp letters and numbers up to something else
 		for lex.currentRune, _, err = lex.in.ReadRune(); (unicode.IsLetter(lex.currentRune) || unicode.IsNumber(lex.currentRune)) && err == nil; {
 			str = str + string(lex.currentRune)
 			lex.currentRune, _, err = lex.in.ReadRune()
@@ -104,10 +104,10 @@ func (lex *Lexer) GetToken() (*Token, error) {
 		}
 
 		if isFloat {
-			tok.Code = TokFLOAT
+			tok.Code = FLOAT
 			tok.FloatValue, _ = strconv.ParseFloat(str, 64)
 		} else {
-			tok.Code = TokINT
+			tok.Code = INT
 			tok.IntValue, _ = strconv.ParseInt(str, 10, 64)
 		}
 
@@ -119,23 +119,23 @@ func (lex *Lexer) GetToken() (*Token, error) {
 	// plus
 	switch lex.currentRune {
 	case '+':
-		tok.Code = TokPLUS
+		tok.Code = PLUS
 	case '-':
-		tok.Code = TokMINUS
+		tok.Code = MINUS
 	case '*':
-		tok.Code = TokMULTIPLY
+		tok.Code = MULTIPLY
 	case '/':
-		tok.Code = TokDIVIDE
+		tok.Code = DIVIDE
 	case '{':
-		tok.Code = TokOPENBRACE
+		tok.Code = OPENBRACE
 	case '}':
-		tok.Code = TokCLOSEBRACE
+		tok.Code = CLOSEBRACE
 	case '(':
-		tok.Code = TokOPENPARENS
+		tok.Code = OPENPARENS
 	case ')':
-		tok.Code = TokCLOSEPARENS
+		tok.Code = CLOSEPARENS
 	default:
-		return nil, fmt.Errorf("Unrecoginsed token: %q", lex.currentRune)
+		return nil, fmt.Errorf("Unrecognised token: %q", lex.currentRune)
 	}
 
 	// Move to the next rune

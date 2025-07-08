@@ -11,14 +11,14 @@ func TestSingleCharSymbols(t *testing.T) {
 		symbol string
 		tok    *Token
 	}{
-		{"+", &Token{Code: TokPLUS}},
-		{"-", &Token{Code: TokMINUS}},
-		{"/", &Token{Code: TokDIVIDE}},
-		{"*", &Token{Code: TokMULTIPLY}},
-		{"{", &Token{Code: TokOPENBRACE}},
-		{"}", &Token{Code: TokCLOSEBRACE}},
-		{"(", &Token{Code: TokOPENPARENS}},
-		{")", &Token{Code: TokCLOSEPARENS}},
+		{"+", &Token{Code: PLUS}},
+		{"-", &Token{Code: MINUS}},
+		{"/", &Token{Code: DIVIDE}},
+		{"*", &Token{Code: MULTIPLY}},
+		{"{", &Token{Code: OPENBRACE}},
+		{"}", &Token{Code: CLOSEBRACE}},
+		{"(", &Token{Code: OPENPARENS}},
+		{")", &Token{Code: CLOSEPARENS}},
 	}
 
 	for _, table := range tables {
@@ -47,7 +47,7 @@ func TestEmptyString(t *testing.T) {
 		t.Errorf("Lexer GetToken returned an error: %s", err)
 	}
 
-	expected := Token{Code: TokEOF}
+	expected := Token{Code: EOF}
 
 	if *token != expected {
 		t.Errorf("Lexer GetToken dod not return EOF Token: got %d ", token.Code)
@@ -64,7 +64,7 @@ func TestInt(t *testing.T) {
 		t.Errorf("Lexer GetToken returned an error: %s", err)
 	}
 
-	expected := Token{Code: TokINT, IntValue: 123}
+	expected := Token{Code: INT, IntValue: 123}
 
 	if *token != expected {
 		if token.Code != expected.Code {
@@ -87,7 +87,7 @@ func TestFloat(t *testing.T) {
 		t.Errorf("Lexer GetToken returned an error: %s", err)
 	}
 
-	expected := Token{Code: TokFLOAT, FloatValue: 123.123}
+	expected := Token{Code: FLOAT, FloatValue: 123.123}
 
 	if *token != expected {
 		if token.Code != expected.Code {
@@ -109,7 +109,7 @@ func TestBadFloat(t *testing.T) {
 	if err == nil {
 		t.Errorf("Lexer GetToken should have returned an error but did not")
 	} else if err.Error() != "Double '.' in number" {
-		t.Errorf("Lexer GetToken did not returnt he correct error string: %s", err)
+		t.Errorf("Lexer GetToken did not return the correct error string: %s", err)
 	}
 }
 
@@ -123,7 +123,7 @@ func TestString(t *testing.T) {
 		t.Errorf("Lexer GetToken returned an error: %s", err)
 	}
 
-	expected := Token{Code: TokSTRING, StringValue: "somestring"}
+	expected := Token{Code: STRING, StringValue: "somestring"}
 
 	if *token != expected {
 		if token.Code != expected.Code {
@@ -143,7 +143,7 @@ func TestEOFAfterMultipleTokens(t *testing.T) {
 	var token *Token
 	var err error
 
-	for token, err = lex.GetToken(); err == nil && token.Code != TokEOF; {
+	for token, err = lex.GetToken(); err == nil && token.Code != EOF; {
 		// Get next
 		token, err = lex.GetToken()
 	}
@@ -153,7 +153,7 @@ func TestEOFAfterMultipleTokens(t *testing.T) {
 	}
 
 	// Last token should be EOF
-	expected := Token{Code: TokEOF}
+	expected := Token{Code: EOF}
 
 	if *token != expected {
 		t.Errorf("Lexer GetToken dod not return EOF Token: got %d ", token.Code)
@@ -168,7 +168,7 @@ func TestChar(t *testing.T) {
 
 	if err == nil {
 		t.Errorf("Lexer GetToken should have returned an error but did not")
-	} else if err.Error() != "Unrecoginsed token: '@'" {
-		t.Errorf("Lexer GetToken did not returnt he correct error string: %s", err)
+	} else if err.Error() != "Unrecognised token: '@'" {
+		t.Errorf("Lexer GetToken did not return the correct error string: %s", err)
 	}
 }

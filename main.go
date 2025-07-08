@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"bitbucket.org/rtbaker/goyali/lexer"
+	"github.com/rtbaker/goyali/lexer"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 	var token *lexer.Token
 	var err error
 
-	for token, err = lex.GetToken(); err == nil && token.Code != lexer.TokEOF; {
+	for token, err = lex.GetToken(); err == nil && token.Code != lexer.EOF; {
 		token.PrintToken()
 
 		// Get next

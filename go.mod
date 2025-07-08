@@ -1,1 +1,1 @@
-module bitbucket.org/rtbaker/goyali
+module github.com/rtbaker/goyali

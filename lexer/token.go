@@ -8,18 +8,18 @@ import (
 type TokenCode int
 
 const (
-	TokEOF         TokenCode = 1
-	TokINT         TokenCode = 2
-	TokFLOAT       TokenCode = 3
-	TokPLUS        TokenCode = 4
-	TokMINUS       TokenCode = 5
-	TokMULTIPLY    TokenCode = 6
-	TokDIVIDE      TokenCode = 7
-	TokOPENBRACE   TokenCode = 8
-	TokCLOSEBRACE  TokenCode = 9
-	TokSTRING      TokenCode = 10
-	TokOPENPARENS  TokenCode = 11
-	TokCLOSEPARENS TokenCode = 12
+	EOF TokenCode = iota
+	INT
+	FLOAT
+	PLUS
+	MINUS
+	MULTIPLY
+	DIVIDE
+	OPENBRACE
+	CLOSEBRACE
+	STRING
+	OPENPARENS
+	CLOSEPARENS
 )
 
 // Token A single token from the lexer
@@ -33,29 +33,29 @@ type Token struct {
 // PrintToken Pretty print the token for debugging
 func (tok *Token) PrintToken() {
 	switch tok.Code {
-	case TokEOF:
+	case EOF:
 		fmt.Println("End of file")
-	case TokINT:
+	case INT:
 		fmt.Printf("Integer: %d\n", tok.IntValue)
-	case TokFLOAT:
+	case FLOAT:
 		fmt.Printf("Float: %f\n", tok.FloatValue)
-	case TokPLUS:
+	case PLUS:
 		fmt.Println("Plus")
-	case TokMINUS:
+	case MINUS:
 		fmt.Println("Minus")
-	case TokMULTIPLY:
+	case MULTIPLY:
 		fmt.Println("Multiply")
-	case TokDIVIDE:
+	case DIVIDE:
 		fmt.Println("Divide")
-	case TokOPENBRACE:
+	case OPENBRACE:
 		fmt.Println("Open brace")
-	case TokCLOSEBRACE:
+	case CLOSEBRACE:
 		fmt.Println("Close brace")
-	case TokOPENPARENS:
+	case OPENPARENS:
 		fmt.Println("Open parens")
-	case TokCLOSEPARENS:
+	case CLOSEPARENS:
 		fmt.Println("Close parens")
-	case TokSTRING:
+	case STRING:
 		fmt.Printf("String: %s\n", tok.StringValue)
 	}
 }
