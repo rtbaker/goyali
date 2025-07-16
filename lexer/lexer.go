@@ -32,7 +32,16 @@ func NewLexer(input *bufio.Reader) *Lexer {
 
 func (lex *Lexer) ReadRune() (rune, int, error) {
 	lex.pos++
-	return lex.in.ReadRune()
+
+	current, size, err := lex.in.ReadRune()
+
+	if current == '\n' {
+		lex.line++
+		lex.pos = 0
+		return ' ', 1, nil
+	}
+
+	return current, size, err
 }
 
 // GetToken Get the next Token from the stream

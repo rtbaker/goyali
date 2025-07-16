@@ -10,7 +10,7 @@ import (
 
 func main() {
 	//reader := bufio.NewReader(os.Stdin)
-	reader := bufio.NewReader(strings.NewReader("    abcdefg abc(dfdf)/2+\n {base, val}"))
+	reader := bufio.NewReader(strings.NewReader("    abcdefg abc(param)/2+\n {base, val}"))
 	lex := lexer.NewLexer(reader)
 
 	var token *lexer.Token
