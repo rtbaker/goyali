@@ -11,12 +11,12 @@ func TestSingleCharSymbols(t *testing.T) {
 		symbol string
 		tok    *Token
 	}{
-		{"+", &Token{Code: PLUS}},
-		{"-", &Token{Code: MINUS}},
-		{"/", &Token{Code: DIVIDE}},
-		{"*", &Token{Code: MULTIPLY}},
-		{"{", &Token{Code: OPENBRACE}},
-		{"}", &Token{Code: CLOSEBRACE}},
+		//		{"+", &Token{Code: PLUS}},
+		//		{"-", &Token{Code: MINUS}},
+		//		{"/", &Token{Code: DIVIDE}},
+		//		{"*", &Token{Code: MULTIPLY}},
+		//		{"{", &Token{Code: OPENBRACE}},
+		//		{"}", &Token{Code: CLOSEBRACE}},
 		{"(", &Token{Code: OPENPARENS}},
 		{")", &Token{Code: CLOSEPARENS}},
 	}
@@ -31,7 +31,7 @@ func TestSingleCharSymbols(t *testing.T) {
 			t.Errorf("Lexer GetToken returned an error: %s", err)
 		}
 
-		if *token != *table.tok {
+		if token.Code != table.tok.Code {
 			t.Errorf("Lexer GetToken returned the wrong token: expected %d got %d ", table.tok.Code, token.Code)
 		}
 	}
@@ -54,66 +54,67 @@ func TestEmptyString(t *testing.T) {
 	}
 }
 
-func TestInt(t *testing.T) {
-	reader := bufio.NewReader(strings.NewReader("123"))
-	lex := NewLexer(reader)
+/*
+	func TestInt(t *testing.T) {
+		reader := bufio.NewReader(strings.NewReader("123"))
+		lex := NewLexer(reader)
 
-	token, err := lex.GetToken()
+		token, err := lex.GetToken()
 
-	if err != nil {
-		t.Errorf("Lexer GetToken returned an error: %s", err)
-	}
-
-	expected := Token{Code: INT, IntValue: 123}
-
-	if *token != expected {
-		if token.Code != expected.Code {
-			t.Errorf("Lexer GetToken did not return INT Token: got %d ", token.Code)
+		if err != nil {
+			t.Errorf("Lexer GetToken returned an error: %s", err)
 		}
 
-		if token.IntValue != expected.IntValue {
-			t.Errorf("Lexer did not return correct in value (expected 123) got %d", token.IntValue)
+		expected := Token{Code: INT, IntValue: 123}
+
+		if *token != expected {
+			if token.Code != expected.Code {
+				t.Errorf("Lexer GetToken did not return INT Token: got %d ", token.Code)
+			}
+
+			if token.IntValue != expected.IntValue {
+				t.Errorf("Lexer did not return correct in value (expected 123) got %d", token.IntValue)
+			}
 		}
 	}
-}
 
-func TestFloat(t *testing.T) {
-	reader := bufio.NewReader(strings.NewReader("123.123"))
-	lex := NewLexer(reader)
+	func TestFloat(t *testing.T) {
+		reader := bufio.NewReader(strings.NewReader("123.123"))
+		lex := NewLexer(reader)
 
-	token, err := lex.GetToken()
+		token, err := lex.GetToken()
 
-	if err != nil {
-		t.Errorf("Lexer GetToken returned an error: %s", err)
-	}
-
-	expected := Token{Code: FLOAT, FloatValue: 123.123}
-
-	if *token != expected {
-		if token.Code != expected.Code {
-			t.Errorf("Lexer GetToken did not return Float Token: got %d ", token.Code)
+		if err != nil {
+			t.Errorf("Lexer GetToken returned an error: %s", err)
 		}
 
-		if token.IntValue != expected.IntValue {
-			t.Errorf("Lexer did not return correct in value (expected 123.123) got %f", token.FloatValue)
+		expected := Token{Code: FLOAT, FloatValue: 123.123}
+
+		if *token != expected {
+			if token.Code != expected.Code {
+				t.Errorf("Lexer GetToken did not return Float Token: got %d ", token.Code)
+			}
+
+			if token.IntValue != expected.IntValue {
+				t.Errorf("Lexer did not return correct in value (expected 123.123) got %f", token.FloatValue)
+			}
 		}
 	}
-}
 
-func TestBadFloat(t *testing.T) {
-	reader := bufio.NewReader(strings.NewReader("123.123.123"))
-	lex := NewLexer(reader)
+	func TestBadFloat(t *testing.T) {
+		reader := bufio.NewReader(strings.NewReader("123.123.123"))
+		lex := NewLexer(reader)
 
-	_, err := lex.GetToken()
+		_, err := lex.GetToken()
 
-	if err == nil {
-		t.Errorf("Lexer GetToken should have returned an error but did not")
-	} else if err.Error() != "double '.' in number" {
-		t.Errorf("Lexer GetToken did not return the correct error string: %s", err)
+		if err == nil {
+			t.Errorf("Lexer GetToken should have returned an error but did not")
+		} else if err.Error() != "double '.' in number" {
+			t.Errorf("Lexer GetToken did not return the correct error string: %s", err)
+		}
 	}
-}
-
-func TestString(t *testing.T) {
+*/
+func TestAtom(t *testing.T) {
 	reader := bufio.NewReader(strings.NewReader("somestring"))
 	lex := NewLexer(reader)
 
@@ -123,21 +124,21 @@ func TestString(t *testing.T) {
 		t.Errorf("Lexer GetToken returned an error: %s", err)
 	}
 
-	expected := Token{Code: STRING, StringValue: "somestring"}
+	expected := Token{Code: ATOM, Value: "somestring"}
 
 	if *token != expected {
 		if token.Code != expected.Code {
 			t.Errorf("Lexer GetToken did not return String Token: got %d ", token.Code)
 		}
 
-		if token.StringValue != expected.StringValue {
-			t.Errorf("Lexer did not return correct in value (expected 'somestring') got %s", token.StringValue)
+		if token.Value != expected.Value {
+			t.Errorf("Lexer did not return correct in value (expected 'somestring') got %s", token.Value)
 		}
 	}
 }
 
 func TestEOFAfterMultipleTokens(t *testing.T) {
-	reader := bufio.NewReader(strings.NewReader("somestring and another 123 + 45"))
+	reader := bufio.NewReader(strings.NewReader("somestring and another"))
 	lex := NewLexer(reader)
 
 	var token *Token

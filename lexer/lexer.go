@@ -2,9 +2,7 @@ package lexer
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
-	"strconv"
 	"unicode"
 )
 
@@ -84,7 +82,7 @@ func (lex *Lexer) GetToken() (*Token, error) {
 
 	// Is alpha
 	if unicode.IsLetter(lex.currentRune) {
-		tok.Code = STRING
+		tok.Code = ATOM
 		tok.Line = lex.line
 		tok.Position = lex.pos
 
@@ -92,7 +90,7 @@ func (lex *Lexer) GetToken() (*Token, error) {
 
 		// Slurp letters and numbers up to something else
 		lex.currentRune, _, err = lex.ReadRune()
-		for (unicode.IsLetter(lex.currentRune) || unicode.IsNumber(lex.currentRune)) && err == nil {
+		for unicode.IsLetter(lex.currentRune) && err == nil {
 			str = str + string(lex.currentRune)
 			lex.currentRune, _, err = lex.ReadRune()
 		}
@@ -104,52 +102,59 @@ func (lex *Lexer) GetToken() (*Token, error) {
 			return nil, err
 		}
 
-		tok.StringValue = str
+		tok.Code = StringToTokenType(str)
+
+		if tok.Code == ATOM {
+			tok.Value = str
+		}
+
 		return tok, nil
 	}
 
 	// number
-	if unicode.IsNumber(lex.currentRune) {
-		var isFloat = false
-		tok.Line = lex.line
-		tok.Position = lex.pos
+	/*
+		if unicode.IsNumber(lex.currentRune) {
+			var isFloat = false
+			tok.Line = lex.line
+			tok.Position = lex.pos
 
-		var str = string(lex.currentRune)
+			var str = string(lex.currentRune)
 
-		lex.currentRune, _, err = lex.ReadRune()
-
-		for (unicode.IsNumber(lex.currentRune) || lex.currentRune == '.') && err == nil {
-			if lex.currentRune == '.' {
-				if isFloat {
-					// Hmm we've seen a . already error !
-					return nil, errors.New("double '.' in number")
-				}
-
-				isFloat = true
-			}
-
-			str = str + string(lex.currentRune)
 			lex.currentRune, _, err = lex.ReadRune()
 
-		}
+			for (unicode.IsNumber(lex.currentRune) || lex.currentRune == '.') && err == nil {
+				if lex.currentRune == '.' {
+					if isFloat {
+						// Hmm we've seen a . already error !
+						return nil, errors.New("double '.' in number")
+					}
 
-		if err != nil && err.Error() == "EOF" {
-			lex.eof = true
-		} else if err != nil {
-			// eek non eof error
-			return nil, err
-		}
+					isFloat = true
+				}
 
-		if isFloat {
-			tok.Code = FLOAT
-			tok.FloatValue, _ = strconv.ParseFloat(str, 64)
-		} else {
-			tok.Code = INT
-			tok.IntValue, _ = strconv.ParseInt(str, 10, 64)
-		}
+				str = str + string(lex.currentRune)
+				lex.currentRune, _, err = lex.ReadRune()
 
-		return tok, nil
-	}
+			}
+
+			if err != nil && err.Error() == "EOF" {
+				lex.eof = true
+			} else if err != nil {
+				// eek non eof error
+				return nil, err
+			}
+
+			if isFloat {
+				tok.Code = FLOAT
+				tok.FloatValue, _ = strconv.ParseFloat(str, 64)
+			} else {
+				tok.Code = INT
+				tok.IntValue, _ = strconv.ParseInt(str, 10, 64)
+			}
+
+			return tok, nil
+		}
+	*/
 
 	// Single char tokens, set the value if the token we created at the top
 	tok.Line = lex.line
@@ -157,24 +162,24 @@ func (lex *Lexer) GetToken() (*Token, error) {
 
 	// plus
 	switch lex.currentRune {
-	case '+':
-		tok.Code = PLUS
-	case '-':
-		tok.Code = MINUS
-	case '*':
-		tok.Code = MULTIPLY
-	case '/':
-		tok.Code = DIVIDE
-	case '{':
-		tok.Code = OPENBRACE
-	case '}':
-		tok.Code = CLOSEBRACE
+	//	case '+':
+	//		tok.Code = PLUS
+	//	case '-':
+	//		tok.Code = MINUS
+	//	case '*':
+	//		tok.Code = MULTIPLY
+	//	case '/':
+	//		tok.Code = DIVIDE
+	//	case '{':
+	//		tok.Code = OPENBRACE
+	//	case '}':
+	//		tok.Code = CLOSEBRACE
 	case '(':
 		tok.Code = OPENPARENS
 	case ')':
 		tok.Code = CLOSEPARENS
-	case ',':
-		tok.Code = COMMA
+		//	case ',':
+		//		tok.Code = COMMA
 	default:
 		return nil, fmt.Errorf("unrecognised token: %q", lex.currentRune)
 	}

@@ -2,6 +2,7 @@ package lexer
 
 import (
 	"fmt"
+	"strings"
 )
 
 // TokenCode The type of the token
@@ -9,28 +10,39 @@ type TokenCode int
 
 const (
 	EOF TokenCode = iota
-	INT
-	FLOAT
-	PLUS
-	MINUS
-	MULTIPLY
-	DIVIDE
-	OPENBRACE
-	CLOSEBRACE
-	STRING
+	//	INT
+	//	FLOAT
+	//	PLUS
+	//	MINUS
+	//	MULTIPLY
+	//	DIVIDE
+	//	OPENBRACE
+	//	CLOSEBRACE
+	//	STRING
+	ATOM
 	OPENPARENS
 	CLOSEPARENS
-	COMMA
+	// COMMA
+	QUOTE
+	ATOMOPERATOR
+	EQUALS
+	CAR
+	CDR
+	CONS
+	COND
+	LAMBDA
+	LABEL
 )
 
 // Token A single token from the lexer
 type Token struct {
-	Code        TokenCode
-	IntValue    int64
-	FloatValue  float64
-	StringValue string
-	Line        int
-	Position    int
+	Code TokenCode
+	// IntValue    int64
+	// FloatValue  float64
+	// StringValue string
+	Value    string
+	Line     int
+	Position int
 }
 
 func (tok *Token) String() string {
@@ -40,33 +52,54 @@ func (tok *Token) String() string {
 	switch tok.Code {
 	case EOF:
 		name = "EOF"
-	case INT:
-		name = "INT"
-		val = fmt.Sprintf("%d", tok.IntValue)
-	case FLOAT:
-		name = "FLOAT"
-		val = fmt.Sprintf("%f", tok.FloatValue)
-	case PLUS:
-		name = "PLUS"
-	case MINUS:
-		name = "MINUS"
-	case MULTIPLY:
-		name = "MULTIPLY"
-	case DIVIDE:
-		name = "DIVIDE"
-	case OPENBRACE:
-		name = "OPENBRACE"
-	case CLOSEBRACE:
-		name = "CLOSEBRACE"
+	case QUOTE:
+		name = "QUOTE"
+	case ATOMOPERATOR:
+		name = "ATOMOPERATOR"
+	case EQUALS:
+		name = "EQUALS"
+	case ATOM:
+		name = "ATOM"
+		val = tok.Value
+	case CAR:
+		name = "CAR"
+	case CDR:
+		name = "CDR"
+	case CONS:
+		name = "CONS"
+	case COND:
+		name = "COND"
+	case LAMBDA:
+		name = "LAMBDA"
+	case LABEL:
+		name = "LABEL"
 	case OPENPARENS:
 		name = "OPENPARENS"
 	case CLOSEPARENS:
 		name = "CLOSEPARENS"
-	case COMMA:
-		name = "COMMA"
-	case STRING:
-		name = "STRING"
-		val = tok.StringValue
+		//	case INT:
+		//		name = "INT"
+		//		val = fmt.Sprintf("%d", tok.IntValue)
+		//	case FLOAT:
+		//		name = "FLOAT"
+		//		val = fmt.Sprintf("%f", tok.FloatValue)
+		//	case PLUS:
+		//		name = "PLUS"
+		//	case MINUS:
+		//		name = "MINUS"
+		//	case MULTIPLY:
+		//		name = "MULTIPLY"
+		//	case DIVIDE:
+		//		name = "DIVIDE"
+		//	case OPENBRACE:
+		//		name = "OPENBRACE"
+		//	case CLOSEBRACE:
+		//		name = "CLOSEBRACE"
+		//	case COMMA:
+		//		name = "COMMA"
+		//	case STRING:
+		//		name = "STRING"
+		//		val = tok.StringValue
 	}
 
 	if val != "" {
@@ -76,32 +109,30 @@ func (tok *Token) String() string {
 	return fmt.Sprintf("%s\t\t\t(Line %d, position %d)", name, tok.Line, tok.Position)
 }
 
-// PrintToken Pretty print the token for debugging
-func (tok *Token) PrintToken() {
-	switch tok.Code {
-	case EOF:
-		fmt.Println("End of file")
-	case INT:
-		fmt.Printf("Integer: %d\n", tok.IntValue)
-	case FLOAT:
-		fmt.Printf("Float: %f\n", tok.FloatValue)
-	case PLUS:
-		fmt.Println("Plus")
-	case MINUS:
-		fmt.Println("Minus")
-	case MULTIPLY:
-		fmt.Println("Multiply")
-	case DIVIDE:
-		fmt.Println("Divide")
-	case OPENBRACE:
-		fmt.Println("Open brace")
-	case CLOSEBRACE:
-		fmt.Println("Close brace")
-	case OPENPARENS:
-		fmt.Println("Open parens")
-	case CLOSEPARENS:
-		fmt.Println("Close parens")
-	case STRING:
-		fmt.Printf("String: %s\n", tok.StringValue)
+func StringToTokenType(val string) TokenCode {
+	val = strings.ToUpper(val)
+
+	switch val {
+
+	case "QUOTE":
+		return QUOTE
+	case "ATOM":
+		return ATOMOPERATOR
+	case "EQ":
+		return EQUALS
+	case "CAR":
+		return CAR
+	case "CDR":
+		return CDR
+	case "CONS":
+		return CONS
+	case "COND":
+		return COND
+	case "LAMBDA":
+		return LAMBDA
+	case "LABEL":
+		return LABEL
 	}
+
+	return ATOM
 }

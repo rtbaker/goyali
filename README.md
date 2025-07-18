@@ -2,9 +2,8 @@
 
 Go Yet Another Lisp Interpreter
 
+Based on https://paulgraham.com/rootsoflisp.html.
 
-http://llvm.org/docs/tutorial/LangImpl01.html#language
-https://www.csie.ntu.edu.tw/~course/10420/Resources/lp/lp.html
 
 ### Run Tests ###
 
@@ -13,3 +12,14 @@ https://www.csie.ntu.edu.tw/~course/10420/Resources/lp/lp.html
 Show coverage report:
 
 `go tool cover -html=cover.out`
+
+## Grammar ##
+
+program -> expressions
+expressions -> expressions expression | [EMPTY]
+expression -> list | atom
+list -> '(' expressions ')'
+atom -> [SEQUENCE OF LETTERS]
+
+
+
