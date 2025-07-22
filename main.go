@@ -6,25 +6,53 @@ import (
 	"strings"
 
 	"github.com/rtbaker/goyali/lexer"
+	"github.com/rtbaker/goyali/parser"
 )
 
+type LispTest struct {
+	Name string
+	Code string
+}
+
 func main() {
-	//reader := bufio.NewReader(os.Stdin)
-	reader := bufio.NewReader(strings.NewReader("    abcdefg abc(param)/2+\n {base, val}"))
-	lex := lexer.NewLexer(reader)
-
-	var token *lexer.Token
-	var err error
-
-	for token, err = lex.GetToken(); err == nil && token.Code != lexer.EOF; {
-		fmt.Println(token)
-
-		// Get next
-		token, err = lex.GetToken()
+	tests := []LispTest{
+		{Name: "Simple Atom", Code: "foo"},
+		{Name: "Empty List", Code: "()"},
+		{Name: "Atom List", Code: "(foo bar hello)"},
 	}
 
-	if err != nil {
-		fmt.Printf("ERROR: %s\n", err)
-		return
+	for _, test := range tests {
+		//reader := bufio.NewReader(os.Stdin)
+		reader := bufio.NewReader(strings.NewReader(test.Code))
+		lex := lexer.NewLexer(reader)
+
+		parser := parser.NewParser(lex)
+		node, err := parser.Parse()
+
+		if err != nil {
+			fmt.Printf("%s case error: %s", test.Name, err)
+			return
+		}
+
+		fmt.Printf("Test: %s\n", test.Name)
+		printTree(node, 1)
+		fmt.Println()
 	}
+}
+
+func printTree(n parser.Node, indent int) {
+	printSpaces(indent)
+	fmt.Printf("%s\n", n)
+
+	for _, n := range n.Children() {
+		printTree(n, indent+1)
+	}
+}
+
+func printSpaces(indent int) {
+	for i := 0; i < indent; i++ {
+		fmt.Printf(" ")
+	}
+
+	fmt.Printf("- ")
 }

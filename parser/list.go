@@ -3,7 +3,24 @@ package parser
 // A List
 
 type List struct {
+	BaseNode
 	entries []Node
+}
+
+func NewList(line int, position int) *List {
+	return &List{BaseNode: BaseNode{line, position}}
+}
+
+func (list *List) String() string {
+	if len(list.entries) > 0 {
+		return "List"
+	}
+
+	return "Empty List"
+}
+
+func (list *List) AppendNode(n Node) {
+	list.entries = append(list.entries, n)
 }
 
 // Interface Node

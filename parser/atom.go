@@ -4,12 +4,14 @@ import "fmt"
 
 // A basic atom
 type Atom struct {
+	BaseNode
 	Value string
 }
 
-func NewAtom(val string) *Atom {
+func NewAtom(val string, line int, position int) *Atom {
 	return &Atom{
-		Value: val,
+		BaseNode: BaseNode{line, position},
+		Value:    val,
 	}
 }
 
