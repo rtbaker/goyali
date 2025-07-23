@@ -1,5 +1,7 @@
 package parser
 
+import "fmt"
+
 // A List
 
 type CarOp struct {
@@ -25,6 +27,10 @@ func (op *CarOp) Children() []Node {
 }
 
 func (op *CarOp) SyntaxCheck() error {
+	// Only one argument for car
+	if len(op.entries) != 1 {
+		return fmt.Errorf("car operator requires only 1 argument, line %d, position %d", op.Line, op.Position)
+	}
 	return nil
 }
 

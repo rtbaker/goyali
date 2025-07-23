@@ -1,5 +1,7 @@
 package parser
 
+import "fmt"
+
 // A List
 
 type EqualsOp struct {
@@ -25,6 +27,10 @@ func (op *EqualsOp) Children() []Node {
 }
 
 func (op *EqualsOp) SyntaxCheck() error {
+	// Only 2 arguments for eq
+	if len(op.entries) != 2 {
+		return fmt.Errorf("equals operator requires 2 arguments, line %d, position %d", op.Line, op.Position)
+	}
 	return nil
 }
 

@@ -1,5 +1,7 @@
 package parser
 
+import "fmt"
+
 // A List
 
 type CdrOp struct {
@@ -25,6 +27,10 @@ func (op *CdrOp) Children() []Node {
 }
 
 func (op *CdrOp) SyntaxCheck() error {
+	// Only one argument for cdr
+	if len(op.entries) != 1 {
+		return fmt.Errorf("cdr operator requires only 1 argument, line %d, position %d", op.Line, op.Position)
+	}
 	return nil
 }
 

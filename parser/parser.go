@@ -115,32 +115,14 @@ func (parser *Parser) getList() (Node, error) {
 
 	// Keep adding children/entries until the list is closed
 	for parser.lookahead.Code != lexer.CLOSEPARENS {
-		// simple atom
-		if parser.lookahead.Code == lexer.ATOM {
-			atom := NewAtom(parser.lookahead.Value, parser.lookahead.Line, parser.lookahead.Position)
-
-			// Consume token
-			err := parser.match(lexer.ATOM)
-			if err != nil {
-				return nil, err
-			}
-
-			list.AppendNode(atom)
+		exp, err := parser.getExpression()
+		if err != nil {
+			return nil, err
 		}
-
-		// list in a list :-)
-		if parser.lookahead.Code == lexer.OPENPARENS {
-			childList, err := parser.getList()
-
-			if err != nil {
-				return nil, err
-			}
-
-			list.AppendNode(childList)
-		}
+		list.AppendNode(exp)
 	}
 
-	// Start
+	// End
 	err = parser.match(lexer.CLOSEPARENS)
 	if err != nil {
 		return nil, fmt.Errorf("list end error: %s", err)
