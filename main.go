@@ -69,17 +69,19 @@ func main() {
 			continue
 		}
 
-		printTree(node, 1)
+		indent := 1
+		parser.WalkTree(
+			node,
+			func(n parser.Node) error {
+				printSpaces(indent)
+				fmt.Printf("%s\n", n)
+				return nil
+			},
+			func() error { indent++; return nil },
+			func() error { indent--; return nil },
+		)
+
 		fmt.Println()
-	}
-}
-
-func printTree(n parser.Node, indent int) {
-	printSpaces(indent)
-	fmt.Printf("%s\n", n)
-
-	for _, n := range n.Children() {
-		printTree(n, indent+1)
 	}
 }
 

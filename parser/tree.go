@@ -2,14 +2,14 @@ package parser
 
 // Stuff for walking the tree
 
-func WalkTree(top Node, f func(n Node) error) error {
+func WalkTreeSimple(top Node, f func(n Node) error) error {
 	err := f(top)
 	if err != nil {
 		return err
 	}
 
 	for _, n := range top.Children() {
-		err := WalkTree(n, f)
+		err := WalkTreeSimple(n, f)
 		if err != nil {
 			return err
 		}
@@ -18,8 +18,28 @@ func WalkTree(top Node, f func(n Node) error) error {
 	return nil
 }
 
+func WalkTree(top Node, f func(n Node) error, preChildren func() error, postChildren func() error) error {
+	err := f(top)
+	if err != nil {
+		return err
+	}
+
+	preChildren()
+
+	for _, n := range top.Children() {
+		err := WalkTree(n, f, preChildren, postChildren)
+		if err != nil {
+			return err
+		}
+	}
+
+	postChildren()
+
+	return nil
+}
+
 func SyntaxCheckTree(top Node) error {
-	return WalkTree(top, func(n Node) error {
+	return WalkTreeSimple(top, func(n Node) error {
 		return n.SyntaxCheck()
 	})
 }
