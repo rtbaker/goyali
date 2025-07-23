@@ -24,6 +24,7 @@ const (
 	CLOSEPARENS
 	// COMMA
 	QUOTE
+	SHORTQUOTE
 	ATOMOPERATOR
 	EQUALS
 	CAR
@@ -54,6 +55,8 @@ func (tok *Token) String() string {
 		name = "EOF"
 	case QUOTE:
 		name = "QUOTE"
+	case SHORTQUOTE:
+		name = "SHORTQUOTE"
 	case ATOMOPERATOR:
 		name = "ATOMOPERATOR"
 	case EQUALS:
@@ -116,6 +119,8 @@ func StringToTokenType(val string) TokenCode {
 
 	case "QUOTE":
 		return QUOTE
+	case "SHORTQUOTE":
+		return SHORTQUOTE
 	case "ATOM":
 		return ATOMOPERATOR
 	case "EQ":

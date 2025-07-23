@@ -22,7 +22,7 @@ func NewLexer(input *bufio.Reader) *Lexer {
 	l.in = input
 	l.currentRune = ' '
 	l.eof = false
-	l.pos = 0
+	l.pos = 1
 	l.line = 1
 
 	return l
@@ -35,7 +35,7 @@ func (lex *Lexer) ReadRune() (rune, int, error) {
 
 	if current == '\n' {
 		lex.line++
-		lex.pos = 0
+		lex.pos = 1
 		return ' ', 1, nil
 	}
 
@@ -57,13 +57,13 @@ func (lex *Lexer) GetToken() (*Token, error) {
 	if unicode.IsSpace(lex.currentRune) {
 		if lex.currentRune == '\n' {
 			lex.line++
-			lex.pos = 0
+			lex.pos = 1
 		}
 
 		for lex.currentRune, _, err = lex.ReadRune(); unicode.IsSpace(lex.currentRune) && err == nil; {
 			if lex.currentRune == '\n' {
 				lex.line++
-				lex.pos = 0
+				lex.pos = 1
 			}
 
 			lex.currentRune, _, err = lex.ReadRune()
@@ -174,6 +174,8 @@ func (lex *Lexer) GetToken() (*Token, error) {
 	//		tok.Code = OPENBRACE
 	//	case '}':
 	//		tok.Code = CLOSEBRACE
+	case '\'':
+		tok.Code = SHORTQUOTE
 	case '(':
 		tok.Code = OPENPARENS
 	case ')':

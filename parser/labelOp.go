@@ -24,6 +24,10 @@ func (op *LabelOp) Children() []Node {
 	return op.entries
 }
 
+func (op *LabelOp) SyntaxCheck() error {
+	return nil
+}
+
 func (op *LabelOp) Evaluate() (Node, error) {
 	return nil, nil
 }

@@ -19,6 +19,10 @@ func (list *List) String() string {
 	return "Empty List"
 }
 
+func (list *List) isEmptyList() bool {
+	return len(list.entries) == 0
+}
+
 func (list *List) AppendNode(n Node) {
 	list.entries = append(list.entries, n)
 }
@@ -26,6 +30,10 @@ func (list *List) AppendNode(n Node) {
 // Interface Node
 func (list *List) Children() []Node {
 	return list.entries
+}
+
+func (list *List) SyntaxCheck() error {
+	return nil
 }
 
 func (list *List) Evaluate() (Node, error) {

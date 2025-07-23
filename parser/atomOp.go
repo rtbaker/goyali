@@ -1,5 +1,7 @@
 package parser
 
+import "fmt"
+
 // A List
 
 type AtomOp struct {
@@ -22,6 +24,14 @@ func (op *AtomOp) AppendNode(n Node) {
 // Interface Node
 func (op *AtomOp) Children() []Node {
 	return op.entries
+}
+
+func (op *AtomOp) SyntaxCheck() error {
+	// Only one argument for quote
+	if len(op.entries) != 1 {
+		return fmt.Errorf("atom operator requires only 1 argument, line %d, position %d", op.Line, op.Position)
+	}
+	return nil
 }
 
 func (op *AtomOp) Evaluate() (Node, error) {

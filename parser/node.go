@@ -4,6 +4,8 @@ package parser
 type Node interface {
 	// Used to walk the tree
 	Children() []Node
+	// Is the node well formed?
+	SyntaxCheck() error
 	// Evaluate (implicitly walks children), returns a pointer to a Node type as the result (or nil)
 	Evaluate() (Node, error)
 }

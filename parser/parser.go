@@ -67,6 +67,24 @@ func (parser *Parser) getExpression() (Node, error) {
 		return list, nil
 	}
 
+	if parser.lookahead.Code == lexer.SHORTQUOTE {
+		quote := NewQuoteOp(parser.lookahead.Line, parser.lookahead.Position)
+
+		err := parser.match(lexer.SHORTQUOTE)
+		if err != nil {
+			return nil, err
+		}
+
+		expression, err := parser.getExpression()
+		if err != nil {
+			return nil, err
+		}
+
+		quote.AppendNode(expression)
+
+		return quote, nil
+	}
+
 	// Shouldn't get here
 	return nil, fmt.Errorf(
 		"syntax error, mis-formed expression, line: %d, character: %d",

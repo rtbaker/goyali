@@ -24,6 +24,10 @@ func (op *CarOp) Children() []Node {
 	return op.entries
 }
 
+func (op *CarOp) SyntaxCheck() error {
+	return nil
+}
+
 func (op *CarOp) Evaluate() (Node, error) {
 	return nil, nil
 }

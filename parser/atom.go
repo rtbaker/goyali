@@ -24,6 +24,15 @@ func (atom *Atom) Children() []Node {
 	return nil // No children
 }
 
+func (atom *Atom) SyntaxCheck() error {
+	if len(atom.Value) == 0 {
+		// Not sure how this would happen but it's not right
+		return fmt.Errorf("zero length atom value, line %d position %d", atom.Line, atom.Position)
+	}
+
+	return nil
+}
+
 func (atom *Atom) Evaluate() (Node, error) {
 	return nil, nil
 }

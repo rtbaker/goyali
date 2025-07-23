@@ -1,5 +1,7 @@
 package parser
 
+import "fmt"
+
 // A List
 
 type QuoteOp struct {
@@ -22,6 +24,14 @@ func (op *QuoteOp) AppendNode(n Node) {
 // Interface Node
 func (op *QuoteOp) Children() []Node {
 	return op.entries
+}
+
+func (op *QuoteOp) SyntaxCheck() error {
+	// Only one argument for quote
+	if len(op.entries) != 1 {
+		return fmt.Errorf("quote operator requires only 1 argument, line %d, position %d", op.Line, op.Position)
+	}
+	return nil
 }
 
 func (op *QuoteOp) Evaluate() (Node, error) {

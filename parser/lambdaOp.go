@@ -24,6 +24,10 @@ func (op *LambdaOp) Children() []Node {
 	return op.entries
 }
 
+func (op *LambdaOp) SyntaxCheck() error {
+	return nil
+}
+
 func (op *LambdaOp) Evaluate() (Node, error) {
 	return nil, nil
 }

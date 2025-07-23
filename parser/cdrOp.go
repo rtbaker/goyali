@@ -24,6 +24,10 @@ func (op *CdrOp) Children() []Node {
 	return op.entries
 }
 
+func (op *CdrOp) SyntaxCheck() error {
+	return nil
+}
+
 func (op *CdrOp) Evaluate() (Node, error) {
 	return nil, nil
 }

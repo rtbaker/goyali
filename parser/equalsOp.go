@@ -24,6 +24,10 @@ func (op *EqualsOp) Children() []Node {
 	return op.entries
 }
 
+func (op *EqualsOp) SyntaxCheck() error {
+	return nil
+}
+
 func (op *EqualsOp) Evaluate() (Node, error) {
 	return nil, nil
 }

@@ -24,6 +24,10 @@ func (op *ConsOp) Children() []Node {
 	return op.entries
 }
 
+func (op *ConsOp) SyntaxCheck() error {
+	return nil
+}
+
 func (op *ConsOp) Evaluate() (Node, error) {
 	return nil, nil
 }
