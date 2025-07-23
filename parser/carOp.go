@@ -22,6 +22,14 @@ func (op *CarOp) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *CarOp) Line() int {
+	return op.BaseNode.Line
+}
+
+func (op *CarOp) Position() int {
+	return op.BaseNode.Position
+}
+
 func (op *CarOp) Children() []Node {
 	return op.entries
 }

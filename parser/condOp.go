@@ -1,5 +1,7 @@
 package parser
 
+import "fmt"
+
 // A List
 
 type CondOp struct {
@@ -20,11 +22,30 @@ func (op *CondOp) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *CondOp) Line() int {
+	return op.BaseNode.Line
+}
+
+func (op *CondOp) Position() int {
+	return op.BaseNode.Position
+}
+
 func (op *CondOp) Children() []Node {
 	return op.entries
 }
 
 func (op *CondOp) SyntaxCheck() error {
+	// Must have at least 1 entry?
+	if len(op.entries) == 0 {
+		return fmt.Errorf("cond operator requires at least 1 argument, line %d position %d", op.Line(), op.Position())
+	}
+
+	// each entry is (<test expression> <return expression>)
+	for _, n := range op.Children() {
+		if len(n.Children()) != 2 {
+			return fmt.Errorf("cond entry requires 2 expressions, line %d position %d", n.Line(), n.Position())
+		}
+	}
 	return nil
 }
 

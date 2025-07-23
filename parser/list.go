@@ -28,6 +28,14 @@ func (list *List) AppendNode(n Node) {
 }
 
 // Interface Node
+func (list *List) Line() int {
+	return list.BaseNode.Line
+}
+
+func (list *List) Position() int {
+	return list.BaseNode.Position
+}
+
 func (list *List) Children() []Node {
 	return list.entries
 }

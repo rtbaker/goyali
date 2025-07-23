@@ -22,6 +22,14 @@ func (op *ConsOp) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *ConsOp) Line() int {
+	return op.BaseNode.Line
+}
+
+func (op *ConsOp) Position() int {
+	return op.BaseNode.Position
+}
+
 func (op *ConsOp) Children() []Node {
 	return op.entries
 }

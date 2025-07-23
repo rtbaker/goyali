@@ -22,6 +22,14 @@ func (op *QuoteOp) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *QuoteOp) Line() int {
+	return op.BaseNode.Line
+}
+
+func (op *QuoteOp) Position() int {
+	return op.BaseNode.Position
+}
+
 func (op *QuoteOp) Children() []Node {
 	return op.entries
 }

@@ -8,6 +8,10 @@ type Node interface {
 	SyntaxCheck() error
 	// Evaluate (implicitly walks children), returns a pointer to a Node type as the result (or nil)
 	Evaluate() (Node, error)
+	// What line of the source was this on?
+	Line() int
+	// Position
+	Position() int
 }
 
 // List type node

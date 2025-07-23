@@ -45,6 +45,7 @@ func main() {
 		{Name: "Bad car op (2 args)", Code: "(car a b)"},
 		{Name: "Bad cdr op (2 args)", Code: "(cdr a b)"},
 		{Name: "Bad cons op (1 args)", Code: "(cons a)"},
+		{Name: "Bad Cond OP", Code: "(cond ((eq a b) ) ((atom a) second))"},
 	}
 
 	for _, test := range tests {

@@ -20,6 +20,14 @@ func (op *LambdaOp) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *LambdaOp) Line() int {
+	return op.BaseNode.Line
+}
+
+func (op *LambdaOp) Position() int {
+	return op.BaseNode.Position
+}
+
 func (op *LambdaOp) Children() []Node {
 	return op.entries
 }

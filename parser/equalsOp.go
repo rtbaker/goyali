@@ -22,6 +22,14 @@ func (op *EqualsOp) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *EqualsOp) Line() int {
+	return op.BaseNode.Line
+}
+
+func (op *EqualsOp) Position() int {
+	return op.BaseNode.Position
+}
+
 func (op *EqualsOp) Children() []Node {
 	return op.entries
 }

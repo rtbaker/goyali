@@ -22,6 +22,14 @@ func (op *AtomOp) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *AtomOp) Line() int {
+	return op.BaseNode.Line
+}
+
+func (op *AtomOp) Position() int {
+	return op.BaseNode.Position
+}
+
 func (op *AtomOp) Children() []Node {
 	return op.entries
 }

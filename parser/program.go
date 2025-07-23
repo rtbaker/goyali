@@ -11,6 +11,14 @@ func (prog *Program) String() string {
 }
 
 // Interface Node
+func (prog *Program) Line() int {
+	return 0
+}
+
+func (prog *Program) Position() int {
+	return 0
+}
+
 func (prog *Program) Children() []Node {
 	return prog.expressions
 }

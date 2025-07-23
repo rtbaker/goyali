@@ -20,6 +20,14 @@ func (atom *Atom) String() string {
 }
 
 // Interface Node
+func (atom *Atom) Line() int {
+	return atom.BaseNode.Line
+}
+
+func (atom *Atom) Position() int {
+	return atom.BaseNode.Position
+}
+
 func (atom *Atom) Children() []Node {
 	return nil // No children
 }

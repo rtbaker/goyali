@@ -22,6 +22,14 @@ func (op *CdrOp) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *CdrOp) Line() int {
+	return op.BaseNode.Line
+}
+
+func (op *CdrOp) Position() int {
+	return op.BaseNode.Position
+}
+
 func (op *CdrOp) Children() []Node {
 	return op.entries
 }
