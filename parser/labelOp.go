@@ -1,5 +1,7 @@
 package parser
 
+import "fmt"
+
 // A List
 
 type LabelOp struct {
@@ -33,6 +35,16 @@ func (op *LabelOp) Children() []Node {
 }
 
 func (op *LabelOp) SyntaxCheck() error {
+	if len(op.entries) != 2 {
+		return fmt.Errorf("label op requires 2 arguments, line %d position %d", op.Line(), op.Position())
+	}
+
+	labelNode := op.entries[0]
+
+	if _, ok := labelNode.(*Atom); !ok {
+		return fmt.Errorf("label op first arg must be an atom, line %d position %d", op.Line(), op.Position())
+	}
+
 	return nil
 }
 

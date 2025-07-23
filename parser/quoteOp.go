@@ -37,7 +37,7 @@ func (op *QuoteOp) Children() []Node {
 func (op *QuoteOp) SyntaxCheck() error {
 	// Only one argument for quote
 	if len(op.entries) != 1 {
-		return fmt.Errorf("quote operator requires only 1 argument, line %d, position %d", op.Line, op.Position)
+		return fmt.Errorf("quote operator requires only 1 argument, line %d, position %d", op.Line(), op.Position())
 	}
 	return nil
 }

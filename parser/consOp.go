@@ -37,7 +37,7 @@ func (op *ConsOp) Children() []Node {
 func (op *ConsOp) SyntaxCheck() error {
 	// Only 2 arguments for cons
 	if len(op.entries) != 2 {
-		return fmt.Errorf("cons operator requires 2 arguments, line %d, position %d", op.Line, op.Position)
+		return fmt.Errorf("cons operator requires 2 arguments, line %d, position %d", op.Line(), op.Position())
 	}
 	return nil
 }

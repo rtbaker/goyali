@@ -37,7 +37,7 @@ func (op *AtomOp) Children() []Node {
 func (op *AtomOp) SyntaxCheck() error {
 	// Only one argument for quote
 	if len(op.entries) != 1 {
-		return fmt.Errorf("atom operator requires only 1 argument, line %d, position %d", op.Line, op.Position)
+		return fmt.Errorf("atom operator requires only 1 argument, line %d, position %d", op.Line(), op.Position())
 	}
 	return nil
 }

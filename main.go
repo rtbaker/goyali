@@ -36,7 +36,8 @@ func main() {
 		{Name: "Cons OP", Code: "(cons a (b c d))"},
 		{Name: "Cond OP", Code: "(cond ((eq a b) first) ((atom a) second))"},
 		{Name: "Cond OP 2", Code: "(cond (y 't) ('t '()))"},
-		{Name: "Lambda", Code: "((lambda (x) (cons x (b))) a)"},
+		{Name: "Lambda", Code: "(lambda (x) (cons x (b)))"},
+		{Name: "Lambda with args", Code: "((lambda (x) (cons x (b))) a)"},
 		{Name: "Label", Code: "(label f (lambda (x y z) (cons x(b))))"},
 		{Name: "Bad quote op (2 args)", Code: "(quote a b)"},
 		{Name: "Bad atom op (2 args)", Code: "(atom a b)"},
@@ -46,6 +47,10 @@ func main() {
 		{Name: "Bad cdr op (2 args)", Code: "(cdr a b)"},
 		{Name: "Bad cons op (1 args)", Code: "(cons a)"},
 		{Name: "Bad Cond OP", Code: "(cond ((eq a b) ) ((atom a) second))"},
+		{Name: "Bad Label (1 arg)", Code: "(label (lambda (x y z) (cons x(b))))"},
+		{Name: "Bad Label (non atom first arg)", Code: "(label (f) (lambda (x y z) (cons x(b))))"},
+		{Name: "Bad lambda (1 arg)", Code: "(lambda (cons x (b)))"},
+		{Name: "Bad lambda (non atom arg)", Code: "(lambda (a (a)) (cons x (b)))"},
 	}
 
 	for _, test := range tests {
