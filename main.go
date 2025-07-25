@@ -52,6 +52,8 @@ func main() {
 		{Name: "Bad Label (non atom first arg)", Code: "(label (f) (lambda (x y z) (cons x(b))))"},
 		{Name: "Bad lambda (1 arg)", Code: "(lambda (cons x (b)))"},
 		{Name: "Bad lambda (non atom arg)", Code: "(lambda (a (a)) (cons x (b)))"},
+		{Name: "Bad defun (name not atom)", Code: "(defun (a b) (a b) 'a)"},
+		{Name: "Bad defun (non atom arg)", Code: "(defun name (a (b)) 'a)"},
 	}
 
 	for _, test := range tests {

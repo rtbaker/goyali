@@ -12,6 +12,8 @@ type Node interface {
 	Line() int
 	// Position
 	Position() int
+	// Quoted value
+	QuotedValue() Node
 }
 
 // List type node

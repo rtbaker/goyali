@@ -22,6 +22,10 @@ func (op *LambdaOp) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *LambdaOp) QuotedValue() Node {
+	return NewAtom("lambda", op.Line(), op.Position())
+}
+
 func (op *LambdaOp) Line() int {
 	return op.BaseNode.Line
 }

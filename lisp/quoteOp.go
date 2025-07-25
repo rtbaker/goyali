@@ -22,6 +22,10 @@ func (op *QuoteOp) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *QuoteOp) QuotedValue() Node {
+	return NewAtom("quote", op.Position(), op.Line())
+}
+
 func (op *QuoteOp) Line() int {
 	return op.BaseNode.Line
 }

@@ -22,6 +22,10 @@ func (op *CdrOp) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *CdrOp) QuotedValue() Node {
+	return NewAtom("cdr", op.Line(), op.Position())
+}
+
 func (op *CdrOp) Line() int {
 	return op.BaseNode.Line
 }

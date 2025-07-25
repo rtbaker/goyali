@@ -11,6 +11,10 @@ func (prog *Program) String() string {
 }
 
 // Interface Node
+func (prog *Program) QuotedValue() Node {
+	return NewAtom("", 0, 0)
+}
+
 func (prog *Program) Line() int {
 	return 0
 }

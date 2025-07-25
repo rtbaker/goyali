@@ -22,6 +22,10 @@ func (op *ConsOp) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *ConsOp) QuotedValue() Node {
+	return NewAtom("cons", op.Line(), op.Position())
+}
+
 func (op *ConsOp) Line() int {
 	return op.BaseNode.Line
 }

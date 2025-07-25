@@ -22,6 +22,10 @@ func (op *EqualsOp) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *EqualsOp) QuotedValue() Node {
+	return NewAtom("eq", op.Line(), op.Position())
+}
+
 func (op *EqualsOp) Line() int {
 	return op.BaseNode.Line
 }

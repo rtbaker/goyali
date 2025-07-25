@@ -20,6 +20,10 @@ func (op *DefunOp) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *DefunOp) QuotedValue() Node {
+	return NewAtom("defun", op.Line(), op.Position())
+}
+
 func (op *DefunOp) Line() int {
 	return op.BaseNode.Line
 }

@@ -20,6 +20,10 @@ func (atom *Atom) String() string {
 }
 
 // Interface Node
+func (atom *Atom) QuotedValue() Node {
+	return atom
+}
+
 func (atom *Atom) Line() int {
 	return atom.BaseNode.Line
 }

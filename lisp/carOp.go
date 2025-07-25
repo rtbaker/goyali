@@ -22,6 +22,10 @@ func (op *CarOp) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *CarOp) QuotedValue() Node {
+	return NewAtom("car", op.Line(), op.Position())
+}
+
 func (op *CarOp) Line() int {
 	return op.BaseNode.Line
 }

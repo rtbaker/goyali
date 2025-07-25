@@ -22,6 +22,10 @@ func (op *CondOp) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *CondOp) QuotedValue() Node {
+	return NewAtom("cond", op.Line(), op.Position())
+}
+
 func (op *CondOp) Line() int {
 	return op.BaseNode.Line
 }
