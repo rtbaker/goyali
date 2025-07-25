@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/rtbaker/goyali/lexer"
-	"github.com/rtbaker/goyali/parser"
+	"github.com/rtbaker/goyali/lisp"
 )
 
 type LispTest struct {
@@ -38,6 +38,7 @@ func main() {
 		{Name: "Cond OP 2", Code: "(cond (y 't) ('t '()))"},
 		{Name: "Lambda", Code: "(lambda (x) (cons x (b)))"},
 		{Name: "Lambda with args", Code: "((lambda (x) (cons x (b))) a)"},
+		{Name: "Defun op", Code: "(defun subst (a b c) (cons x (b)))"},
 		{Name: "Label", Code: "(label f (lambda (x y z) (cons x(b))))"},
 		{Name: "Bad quote op (2 args)", Code: "(quote a b)"},
 		{Name: "Bad atom op (2 args)", Code: "(atom a b)"},
@@ -58,7 +59,7 @@ func main() {
 		reader := bufio.NewReader(strings.NewReader(test.Code))
 		lex := lexer.NewLexer(reader)
 
-		myParser := parser.NewParser(lex)
+		myParser := lisp.NewParser(lex)
 		node, err := myParser.Parse()
 
 		if err != nil {
@@ -68,16 +69,16 @@ func main() {
 
 		fmt.Printf("Test: %s\n", test.Name)
 
-		err = parser.SyntaxCheckTree(node)
+		err = lisp.SyntaxCheckTree(node)
 		if err != nil {
 			fmt.Printf("Syntax Check error: %s\n\n", err)
 			continue
 		}
 
 		indent := 1
-		parser.WalkTree(
+		lisp.WalkTree(
 			node,
-			func(n parser.Node) error {
+			func(n lisp.Node) error {
 				printSpaces(indent)
 				fmt.Printf("%s\n", n)
 				return nil

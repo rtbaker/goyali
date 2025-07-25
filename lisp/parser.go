@@ -1,4 +1,4 @@
-package parser
+package lisp
 
 import (
 	"fmt"
@@ -166,6 +166,9 @@ func (parser *Parser) getOperator(line int, position int) (ListNode, error) {
 	case lexer.LABEL:
 		node = NewLabelOp(line, position)
 		err = parser.match(lexer.LABEL)
+	case lexer.DEFUN:
+		node = NewDefunOp(line, position)
+		err = parser.match(lexer.DEFUN)
 	}
 
 	// didn't match a know operator

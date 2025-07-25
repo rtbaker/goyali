@@ -33,6 +33,7 @@ const (
 	COND
 	LAMBDA
 	LABEL
+	DEFUN
 )
 
 // Token A single token from the lexer
@@ -76,6 +77,8 @@ func (tok *Token) String() string {
 		name = "LAMBDA"
 	case LABEL:
 		name = "LABEL"
+	case DEFUN:
+		name = "DEFUN"
 	case OPENPARENS:
 		name = "OPENPARENS"
 	case CLOSEPARENS:
@@ -137,6 +140,8 @@ func StringToTokenType(val string) TokenCode {
 		return LAMBDA
 	case "LABEL":
 		return LABEL
+	case "DEFUN":
+		return DEFUN
 	}
 
 	return ATOM

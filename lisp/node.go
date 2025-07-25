@@ -1,4 +1,4 @@
-package parser
+package lisp
 
 // Interface for a basic node in the AST
 type Node interface {
