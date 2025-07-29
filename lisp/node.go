@@ -29,3 +29,16 @@ type BaseNode struct {
 	Line     int
 	Position int
 }
+
+func NodeIsAtom(n Node) bool {
+	_, ok := n.(*Atom)
+	return ok
+}
+
+func Truth() Node {
+	return NewAtom("t", 0, 0)
+}
+
+func Falsity() Node {
+	return NewList(0, 0) // empty list is false
+}

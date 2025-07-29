@@ -14,6 +14,7 @@ func NewProgram() *Program {
 	// Add the builtin functions here
 	env.addSymbol("quote", NewQuoteOp(0, 0))
 	env.addSymbol("atom", NewAtomOp(0, 0))
+	env.addSymbol("eq", NewEqualsOp(0, 0))
 
 	return &Program{
 		env: env,

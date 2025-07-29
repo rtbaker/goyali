@@ -50,17 +50,15 @@ func (op *AtomFunc) Run(args []Node, env *Env) (Node, error) {
 		return nil, err
 	}
 
-	truth := NewAtom("t", 0, 0)
-	falsity := NewList(0, 0) // empty list is false
-
-	if _, ok := retNode.(*Atom); ok {
-		return truth, nil
+	if NodeIsAtom(retNode) {
+		return Truth(), nil
 	}
 
 	if listVal, ok := retNode.(*List); ok {
 		if listVal.isEmptyList() {
-			return truth, nil
+			return Truth(), nil
 		}
 	}
-	return falsity, nil
+
+	return Falsity(), nil
 }

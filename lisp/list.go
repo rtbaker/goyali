@@ -75,14 +75,14 @@ func (list *List) Evaluate(env *Env, inQuote bool) (Node, error) {
 	eFirstNode, err := EvaluateNode(firstNode, env, inQuote)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%s\nevaluating first list item (line %d, position %d)", err, firstNode.Line(), firstNode.Position())
 	}
 
 	if lFunc, ok := eFirstNode.(LispFunction); ok {
 		retNode, err := lFunc.Run(list.entries[1:], env)
 
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%s\n%s (line %d, position %d)", err, eFirstNode.NodeType(), firstNode.Line(), firstNode.Position())
 		}
 
 		return retNode, nil

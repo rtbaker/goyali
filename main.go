@@ -30,6 +30,10 @@ func main() {
 		{Name: "Atom op quoted list", Code: "(atom '(a b c))"},
 		{Name: "atom atom quote", Code: "(atom (atom 'a))"},
 		{Name: "atom quote atom atom", Code: "(atom '(atom 'a))"},
+		{Name: "eq one arg", Code: "(eq 'a)"},
+		{Name: "equals atom atom", Code: "(eq a b)"},
+		{Name: "equals qatom qatom same", Code: "(eq 'a 'a)"},
+		{Name: "equals qatom qatom not the same", Code: "(eq 'a 'b)"},
 		/*
 			{Name: "Equals op atom", Code: "(eq a b)"},
 			{Name: "Equals op empty lists", Code: "(eq () ())"},
@@ -100,7 +104,7 @@ func main() {
 		err = lisp.RunProgram(program)
 
 		if err != nil {
-			fmt.Printf("error running program: %s\n", err)
+			fmt.Printf("%s\n", err)
 		}
 
 		fmt.Println()
