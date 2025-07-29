@@ -45,11 +45,11 @@ func (op *CondOp) SyntaxCheck() error {
 	}
 
 	// each entry is (<test expression> <return expression>)
-	for _, n := range op.Children() {
-		if len(n.Children()) != 2 {
-			return fmt.Errorf("cond entry requires 2 expressions, line %d position %d", n.Line(), n.Position())
-		}
-	}
+	//	for _, n := range op.Children() {
+	//		if len(n.Children()) != 2 {
+	//	return fmt.Errorf("cond entry requires 2 expressions, line %d position %d", n.Line(), n.Position())
+	//	}
+	//	}
 	return nil
 }
 

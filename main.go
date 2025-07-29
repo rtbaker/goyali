@@ -63,7 +63,7 @@ func main() {
 		lex := lexer.NewLexer(reader)
 
 		myParser := parser.NewParser(lex)
-		node, err := myParser.Parse()
+		program, err := myParser.Parse()
 
 		if err != nil {
 			fmt.Printf("%s case error: %s", test.Name, err)
@@ -72,25 +72,25 @@ func main() {
 
 		fmt.Printf("Test: %s\n", test.Name)
 
-		/*
-			err = lisp.SyntaxCheckTree(node)
-			if err != nil {
-				fmt.Printf("Syntax Check error: %s\n\n", err)
-				continue
-			}
-		*/
-		indent := 1
-		lisp.WalkTree(
-			node,
-			func(n lisp.Node) error {
-				printSpaces(indent)
-				fmt.Printf("%s\n", n)
-				return nil
-			},
-			func() error { indent++; return nil },
-			func() error { indent--; return nil },
-		)
+		for _, expression := range program.Children() {
+			indent := 1
 
+			if listExpr, ok := expression.(lisp.ListNode); ok {
+				lisp.WalkTree(
+					listExpr,
+					func(n lisp.Node) error {
+						printSpaces(indent)
+						fmt.Printf("%s\n", n)
+						return nil
+					},
+					func() error { indent++; return nil },
+					func() error { indent--; return nil },
+				)
+			} else {
+				printSpaces(indent)
+				fmt.Printf("%s\n", expression)
+			}
+		}
 		fmt.Println()
 	}
 }

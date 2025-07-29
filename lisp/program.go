@@ -27,6 +27,10 @@ func (prog *Program) Children() []Node {
 	return prog.Expressions
 }
 
+func (prog *Program) AppendNode(n Node) {
+	prog.Expressions = append(prog.Expressions, n)
+}
+
 func (prog *Program) SyntaxCheck() error {
 	return nil
 }

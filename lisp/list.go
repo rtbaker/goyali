@@ -28,17 +28,6 @@ func (list *List) AppendNode(n Node) {
 }
 
 // Interface Node
-func (list *List) QuotedValue() Node {
-	qlist := NewList(list.Line(), list.Position())
-
-	// recurse into lists!
-	for _, n := range list.entries {
-		qlist.AppendNode(n.QuotedValue())
-	}
-
-	return qlist
-}
-
 func (list *List) Line() int {
 	return list.BaseNode.Line
 }

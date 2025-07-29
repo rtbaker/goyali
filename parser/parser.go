@@ -22,7 +22,7 @@ func NewParser(lexer *lexer.Lexer) *Parser {
 	return parser
 }
 
-func (parser *Parser) Parse() (lisp.Node, error) {
+func (parser *Parser) Parse() (*lisp.Program, error) {
 	top := &lisp.Program{}
 
 	var err error
@@ -37,7 +37,7 @@ func (parser *Parser) Parse() (lisp.Node, error) {
 			return nil, err
 		}
 
-		top.Expressions = append(top.Expressions, expr)
+		top.AppendNode(expr)
 	}
 
 	return top, nil

@@ -54,18 +54,18 @@ func (op *DefunOp) SyntaxCheck() error {
 	if _, ok := argsNode.(*List); !ok {
 		return fmt.Errorf("defun op second arg must be a list, line %d position %d", op.Line(), op.Position())
 	}
-
-	allAtoms := true
-	for _, n := range argsNode.Children() {
-		if _, ok := n.(*Atom); !ok {
-			allAtoms = false
+	/*
+		allAtoms := true
+		for _, n := range argsNode.Children() {
+			if _, ok := n.(*Atom); !ok {
+				allAtoms = false
+			}
 		}
-	}
 
-	if !allAtoms {
-		return fmt.Errorf("defun op, arg list must all be atoms, line %d position %d", argsNode.Line(), argsNode.Position())
-	}
-
+		if !allAtoms {
+			return fmt.Errorf("defun op, arg list must all be atoms, line %d position %d", argsNode.Line(), argsNode.Position())
+		}
+	*/
 	return nil
 }
 
