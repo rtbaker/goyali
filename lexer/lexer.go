@@ -111,77 +111,18 @@ func (lex *Lexer) GetToken() (*Token, error) {
 		return tok, nil
 	}
 
-	// number
-	/*
-		if unicode.IsNumber(lex.currentRune) {
-			var isFloat = false
-			tok.Line = lex.line
-			tok.Position = lex.pos
-
-			var str = string(lex.currentRune)
-
-			lex.currentRune, _, err = lex.ReadRune()
-
-			for (unicode.IsNumber(lex.currentRune) || lex.currentRune == '.') && err == nil {
-				if lex.currentRune == '.' {
-					if isFloat {
-						// Hmm we've seen a . already error !
-						return nil, errors.New("double '.' in number")
-					}
-
-					isFloat = true
-				}
-
-				str = str + string(lex.currentRune)
-				lex.currentRune, _, err = lex.ReadRune()
-
-			}
-
-			if err != nil && err.Error() == "EOF" {
-				lex.eof = true
-			} else if err != nil {
-				// eek non eof error
-				return nil, err
-			}
-
-			if isFloat {
-				tok.Code = FLOAT
-				tok.FloatValue, _ = strconv.ParseFloat(str, 64)
-			} else {
-				tok.Code = INT
-				tok.IntValue, _ = strconv.ParseInt(str, 10, 64)
-			}
-
-			return tok, nil
-		}
-	*/
-
 	// Single char tokens, set the value if the token we created at the top
 	tok.Line = lex.line
 	tok.Position = lex.pos
 
 	// plus
 	switch lex.currentRune {
-	//	case '+':
-	//		tok.Code = PLUS
-	//	case '-':
-	//		tok.Code = MINUS
-	//	case '*':
-	//		tok.Code = MULTIPLY
-	//	case '/':
-	//		tok.Code = DIVIDE
-	//	case '{':
-	//		tok.Code = OPENBRACE
-	//	case '}':
-	//		tok.Code = CLOSEBRACE
 	case '\'':
 		tok.Code = SHORTQUOTE
 	case '(':
 		tok.Code = OPENPARENS
 	case ')':
 		tok.Code = CLOSEPARENS
-		//	case ',':
-		//		tok.Code = COMMA
 	default:
 		return nil, fmt.Errorf("unrecognised token: %q", lex.currentRune)
 	}

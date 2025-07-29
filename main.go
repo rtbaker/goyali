@@ -7,6 +7,7 @@ import (
 
 	"github.com/rtbaker/goyali/lexer"
 	"github.com/rtbaker/goyali/lisp"
+	"github.com/rtbaker/goyali/parser"
 )
 
 type LispTest struct {
@@ -61,7 +62,7 @@ func main() {
 		reader := bufio.NewReader(strings.NewReader(test.Code))
 		lex := lexer.NewLexer(reader)
 
-		myParser := lisp.NewParser(lex)
+		myParser := parser.NewParser(lex)
 		node, err := myParser.Parse()
 
 		if err != nil {
@@ -71,12 +72,13 @@ func main() {
 
 		fmt.Printf("Test: %s\n", test.Name)
 
-		err = lisp.SyntaxCheckTree(node)
-		if err != nil {
-			fmt.Printf("Syntax Check error: %s\n\n", err)
-			continue
-		}
-
+		/*
+			err = lisp.SyntaxCheckTree(node)
+			if err != nil {
+				fmt.Printf("Syntax Check error: %s\n\n", err)
+				continue
+			}
+		*/
 		indent := 1
 		lisp.WalkTree(
 			node,

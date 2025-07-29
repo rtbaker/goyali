@@ -3,7 +3,7 @@ package lisp
 // Top level, a list of expressions
 
 type Program struct {
-	expressions []Node
+	Expressions []Node
 }
 
 func (prog *Program) String() string {
@@ -24,7 +24,7 @@ func (prog *Program) Position() int {
 }
 
 func (prog *Program) Children() []Node {
-	return prog.expressions
+	return prog.Expressions
 }
 
 func (prog *Program) SyntaxCheck() error {
