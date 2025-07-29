@@ -26,28 +26,12 @@ func (op *QuoteFunc) NodeType() string {
 	return "Quote Function"
 }
 
-func (op *QuoteFunc) QuotedValue() Node {
-	return NewAtom("quote", op.Position(), op.Line())
-}
-
 func (op *QuoteFunc) Line() int {
 	return op.BaseNode.Line
 }
 
 func (op *QuoteFunc) Position() int {
 	return op.BaseNode.Position
-}
-
-func (op *QuoteFunc) Children() []Node {
-	return op.entries
-}
-
-func (op *QuoteFunc) SyntaxCheck() error {
-	// Only one argument for quote
-	if len(op.entries) != 1 {
-		return fmt.Errorf("quote operator requires only 1 argument, line %d, position %d", op.Line(), op.Position())
-	}
-	return nil
 }
 
 func (op *QuoteFunc) Run(args []Node, env *Env) (Node, error) {

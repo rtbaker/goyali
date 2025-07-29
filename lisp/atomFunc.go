@@ -38,18 +38,29 @@ func (op *AtomFunc) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *AtomFunc) Children() []Node {
-	return op.entries
-}
-
-func (op *AtomFunc) SyntaxCheck() error {
+func (op *AtomFunc) Run(args []Node, env *Env) (Node, error) {
 	// Only one argument for quote
-	if len(op.entries) != 1 {
-		return fmt.Errorf("atom operator requires only 1 argument, line %d, position %d", op.Line(), op.Position())
+	if len(args) != 1 {
+		return nil, fmt.Errorf("atom operator requires only 1 argument")
 	}
-	return nil
-}
 
-func (op *AtomFunc) Run(args []Node) (Node, error) {
-	return nil, nil
+	retNode, err := EvaluateNode(args[0], env, false)
+
+	if err != nil {
+		return nil, err
+	}
+
+	truth := NewAtom("t", 0, 0)
+	falsity := NewList(0, 0) // empty list is false
+
+	if _, ok := retNode.(*Atom); ok {
+		return truth, nil
+	}
+
+	if listVal, ok := retNode.(*List); ok {
+		if listVal.isEmptyList() {
+			return truth, nil
+		}
+	}
+	return falsity, nil
 }

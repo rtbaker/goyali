@@ -25,7 +25,11 @@ func main() {
 		{Name: "Short Quote op list", Code: "'(a b c)"},
 		{Name: "Short Quote op nested list", Code: "'(a b (c))"},
 		{Name: "Atom op atom", Code: "(atom a)"},
+		{Name: "Atom op quoted atom", Code: "(atom 'a)"},
 		{Name: "Atom op list", Code: "(atom (a b c))"},
+		{Name: "Atom op quoted list", Code: "(atom '(a b c))"},
+		{Name: "atom atom quote", Code: "(atom (atom 'a))"},
+		{Name: "atom quote atom atom", Code: "(atom '(atom 'a))"},
 		/*
 			{Name: "Equals op atom", Code: "(eq a b)"},
 			{Name: "Equals op empty lists", Code: "(eq () ())"},
