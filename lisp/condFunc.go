@@ -4,41 +4,41 @@ import "fmt"
 
 // A List
 
-type CondOp struct {
+type CondFunc struct {
 	BaseNode
 	entries []Node
 }
 
-func NewCondOp(line int, position int) *CondOp {
-	return &CondOp{BaseNode: BaseNode{line, position}}
+func NewCondOp(line int, position int) *CondFunc {
+	return &CondFunc{BaseNode: BaseNode{line, position}}
 }
 
-func (op *CondOp) String() string {
+func (op *CondFunc) String() string {
 	return "Cond Operator"
 }
 
-func (op *CondOp) AppendNode(n Node) {
+func (op *CondFunc) AppendNode(n Node) {
 	op.entries = append(op.entries, n)
 }
 
 // Interface Node
-func (op *CondOp) QuotedValue() Node {
+func (op *CondFunc) QuotedValue() Node {
 	return NewAtom("cond", op.Line(), op.Position())
 }
 
-func (op *CondOp) Line() int {
+func (op *CondFunc) Line() int {
 	return op.BaseNode.Line
 }
 
-func (op *CondOp) Position() int {
+func (op *CondFunc) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *CondOp) Children() []Node {
+func (op *CondFunc) Children() []Node {
 	return op.entries
 }
 
-func (op *CondOp) SyntaxCheck() error {
+func (op *CondFunc) SyntaxCheck() error {
 	// Must have at least 1 entry?
 	if len(op.entries) == 0 {
 		return fmt.Errorf("cond operator requires at least 1 argument, line %d position %d", op.Line(), op.Position())
@@ -53,6 +53,6 @@ func (op *CondOp) SyntaxCheck() error {
 	return nil
 }
 
-func (op *CondOp) Evaluate() (Node, error) {
+func (op *CondFunc) Evaluate() (Node, error) {
 	return nil, nil
 }

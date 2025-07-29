@@ -4,41 +4,41 @@ import "fmt"
 
 // A List
 
-type CarOp struct {
+type CarFunc struct {
 	BaseNode
 	entries []Node
 }
 
-func NewCarOp(line int, position int) *CarOp {
-	return &CarOp{BaseNode: BaseNode{line, position}}
+func NewCarOp(line int, position int) *CarFunc {
+	return &CarFunc{BaseNode: BaseNode{line, position}}
 }
 
-func (op *CarOp) String() string {
+func (op *CarFunc) String() string {
 	return "Car Operator"
 }
 
-func (op *CarOp) AppendNode(n Node) {
+func (op *CarFunc) AppendNode(n Node) {
 	op.entries = append(op.entries, n)
 }
 
 // Interface Node
-func (op *CarOp) QuotedValue() Node {
+func (op *CarFunc) QuotedValue() Node {
 	return NewAtom("car", op.Line(), op.Position())
 }
 
-func (op *CarOp) Line() int {
+func (op *CarFunc) Line() int {
 	return op.BaseNode.Line
 }
 
-func (op *CarOp) Position() int {
+func (op *CarFunc) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *CarOp) Children() []Node {
+func (op *CarFunc) Children() []Node {
 	return op.entries
 }
 
-func (op *CarOp) SyntaxCheck() error {
+func (op *CarFunc) SyntaxCheck() error {
 	// Only one argument for car
 	if len(op.entries) != 1 {
 		return fmt.Errorf("car operator requires only 1 argument, line %d, position %d", op.Line(), op.Position())
@@ -46,6 +46,6 @@ func (op *CarOp) SyntaxCheck() error {
 	return nil
 }
 
-func (op *CarOp) Evaluate() (Node, error) {
+func (op *CarFunc) Evaluate() (Node, error) {
 	return nil, nil
 }

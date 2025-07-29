@@ -2,41 +2,41 @@ package lisp
 
 import "fmt"
 
-type DefunOp struct {
+type DefunFunc struct {
 	BaseNode
 	entries []Node
 }
 
-func NewDefunOp(line int, position int) *DefunOp {
-	return &DefunOp{BaseNode: BaseNode{line, position}}
+func NewDefunOp(line int, position int) *DefunFunc {
+	return &DefunFunc{BaseNode: BaseNode{line, position}}
 }
 
-func (op *DefunOp) String() string {
+func (op *DefunFunc) String() string {
 	return "Defun Operator"
 }
 
-func (op *DefunOp) AppendNode(n Node) {
+func (op *DefunFunc) AppendNode(n Node) {
 	op.entries = append(op.entries, n)
 }
 
 // Interface Node
-func (op *DefunOp) QuotedValue() Node {
+func (op *DefunFunc) QuotedValue() Node {
 	return NewAtom("defun", op.Line(), op.Position())
 }
 
-func (op *DefunOp) Line() int {
+func (op *DefunFunc) Line() int {
 	return op.BaseNode.Line
 }
 
-func (op *DefunOp) Position() int {
+func (op *DefunFunc) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *DefunOp) Children() []Node {
+func (op *DefunFunc) Children() []Node {
 	return op.entries
 }
 
-func (op *DefunOp) SyntaxCheck() error {
+func (op *DefunFunc) SyntaxCheck() error {
 	if len(op.entries) != 3 {
 		return fmt.Errorf("defun op requires 3 arguments, line %d position %d", op.Line(), op.Position())
 	}
@@ -69,6 +69,6 @@ func (op *DefunOp) SyntaxCheck() error {
 	return nil
 }
 
-func (op *DefunOp) Evaluate() (Node, error) {
+func (op *DefunFunc) Evaluate() (Node, error) {
 	return nil, nil
 }

@@ -4,41 +4,41 @@ import "fmt"
 
 // A List
 
-type CdrOp struct {
+type CdrFunc struct {
 	BaseNode
 	entries []Node
 }
 
-func NewCdrOp(line int, position int) *CdrOp {
-	return &CdrOp{BaseNode: BaseNode{line, position}}
+func NewCdrOp(line int, position int) *CdrFunc {
+	return &CdrFunc{BaseNode: BaseNode{line, position}}
 }
 
-func (op *CdrOp) String() string {
+func (op *CdrFunc) String() string {
 	return "Cdr Operator"
 }
 
-func (op *CdrOp) AppendNode(n Node) {
+func (op *CdrFunc) AppendNode(n Node) {
 	op.entries = append(op.entries, n)
 }
 
 // Interface Node
-func (op *CdrOp) QuotedValue() Node {
+func (op *CdrFunc) QuotedValue() Node {
 	return NewAtom("cdr", op.Line(), op.Position())
 }
 
-func (op *CdrOp) Line() int {
+func (op *CdrFunc) Line() int {
 	return op.BaseNode.Line
 }
 
-func (op *CdrOp) Position() int {
+func (op *CdrFunc) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *CdrOp) Children() []Node {
+func (op *CdrFunc) Children() []Node {
 	return op.entries
 }
 
-func (op *CdrOp) SyntaxCheck() error {
+func (op *CdrFunc) SyntaxCheck() error {
 	// Only one argument for cdr
 	if len(op.entries) != 1 {
 		return fmt.Errorf("cdr operator requires only 1 argument, line %d, position %d", op.Line(), op.Position())
@@ -46,6 +46,6 @@ func (op *CdrOp) SyntaxCheck() error {
 	return nil
 }
 
-func (op *CdrOp) Evaluate() (Node, error) {
+func (op *CdrFunc) Evaluate() (Node, error) {
 	return nil, nil
 }

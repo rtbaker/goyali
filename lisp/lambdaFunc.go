@@ -4,41 +4,41 @@ import "fmt"
 
 // A List
 
-type LambdaOp struct {
+type LambdaFunc struct {
 	BaseNode
 	entries []Node
 }
 
-func NewLambdaOp(line int, position int) *LambdaOp {
-	return &LambdaOp{BaseNode: BaseNode{line, position}}
+func NewLambdaOp(line int, position int) *LambdaFunc {
+	return &LambdaFunc{BaseNode: BaseNode{line, position}}
 }
 
-func (op *LambdaOp) String() string {
+func (op *LambdaFunc) String() string {
 	return "Lambda Operator"
 }
 
-func (op *LambdaOp) AppendNode(n Node) {
+func (op *LambdaFunc) AppendNode(n Node) {
 	op.entries = append(op.entries, n)
 }
 
 // Interface Node
-func (op *LambdaOp) QuotedValue() Node {
+func (op *LambdaFunc) QuotedValue() Node {
 	return NewAtom("lambda", op.Line(), op.Position())
 }
 
-func (op *LambdaOp) Line() int {
+func (op *LambdaFunc) Line() int {
 	return op.BaseNode.Line
 }
 
-func (op *LambdaOp) Position() int {
+func (op *LambdaFunc) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *LambdaOp) Children() []Node {
+func (op *LambdaFunc) Children() []Node {
 	return op.entries
 }
 
-func (op *LambdaOp) SyntaxCheck() error {
+func (op *LambdaFunc) SyntaxCheck() error {
 	if len(op.entries) != 2 {
 		return fmt.Errorf("lambda op requires 2 arguments, line %d position %d", op.Line(), op.Position())
 	}
@@ -65,6 +65,6 @@ func (op *LambdaOp) SyntaxCheck() error {
 	return nil
 }
 
-func (op *LambdaOp) Evaluate() (Node, error) {
+func (op *LambdaFunc) Evaluate() (Node, error) {
 	return nil, nil
 }

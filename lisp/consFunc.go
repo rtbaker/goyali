@@ -4,41 +4,41 @@ import "fmt"
 
 // A List
 
-type ConsOp struct {
+type ConsFunc struct {
 	BaseNode
 	entries []Node
 }
 
-func NewConsOp(line int, position int) *ConsOp {
-	return &ConsOp{BaseNode: BaseNode{line, position}}
+func NewConsOp(line int, position int) *ConsFunc {
+	return &ConsFunc{BaseNode: BaseNode{line, position}}
 }
 
-func (op *ConsOp) String() string {
+func (op *ConsFunc) String() string {
 	return "Cons Operator"
 }
 
-func (op *ConsOp) AppendNode(n Node) {
+func (op *ConsFunc) AppendNode(n Node) {
 	op.entries = append(op.entries, n)
 }
 
 // Interface Node
-func (op *ConsOp) QuotedValue() Node {
+func (op *ConsFunc) QuotedValue() Node {
 	return NewAtom("cons", op.Line(), op.Position())
 }
 
-func (op *ConsOp) Line() int {
+func (op *ConsFunc) Line() int {
 	return op.BaseNode.Line
 }
 
-func (op *ConsOp) Position() int {
+func (op *ConsFunc) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *ConsOp) Children() []Node {
+func (op *ConsFunc) Children() []Node {
 	return op.entries
 }
 
-func (op *ConsOp) SyntaxCheck() error {
+func (op *ConsFunc) SyntaxCheck() error {
 	// Only 2 arguments for cons
 	if len(op.entries) != 2 {
 		return fmt.Errorf("cons operator requires 2 arguments, line %d, position %d", op.Line(), op.Position())
@@ -46,6 +46,6 @@ func (op *ConsOp) SyntaxCheck() error {
 	return nil
 }
 
-func (op *ConsOp) Evaluate() (Node, error) {
+func (op *ConsFunc) Evaluate() (Node, error) {
 	return nil, nil
 }

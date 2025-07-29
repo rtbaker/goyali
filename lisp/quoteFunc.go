@@ -4,41 +4,41 @@ import "fmt"
 
 // A List
 
-type QuoteOp struct {
+type QuoteFunc struct {
 	BaseNode
 	entries []Node
 }
 
-func NewQuoteOp(line int, position int) *QuoteOp {
-	return &QuoteOp{BaseNode: BaseNode{line, position}}
+func NewQuoteOp(line int, position int) *QuoteFunc {
+	return &QuoteFunc{BaseNode: BaseNode{line, position}}
 }
 
-func (op *QuoteOp) String() string {
+func (op *QuoteFunc) String() string {
 	return "Quote Operator"
 }
 
-func (op *QuoteOp) AppendNode(n Node) {
+func (op *QuoteFunc) AppendNode(n Node) {
 	op.entries = append(op.entries, n)
 }
 
 // Interface Node
-func (op *QuoteOp) QuotedValue() Node {
+func (op *QuoteFunc) QuotedValue() Node {
 	return NewAtom("quote", op.Position(), op.Line())
 }
 
-func (op *QuoteOp) Line() int {
+func (op *QuoteFunc) Line() int {
 	return op.BaseNode.Line
 }
 
-func (op *QuoteOp) Position() int {
+func (op *QuoteFunc) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *QuoteOp) Children() []Node {
+func (op *QuoteFunc) Children() []Node {
 	return op.entries
 }
 
-func (op *QuoteOp) SyntaxCheck() error {
+func (op *QuoteFunc) SyntaxCheck() error {
 	// Only one argument for quote
 	if len(op.entries) != 1 {
 		return fmt.Errorf("quote operator requires only 1 argument, line %d, position %d", op.Line(), op.Position())
@@ -46,6 +46,6 @@ func (op *QuoteOp) SyntaxCheck() error {
 	return nil
 }
 
-func (op *QuoteOp) Evaluate() (Node, error) {
+func (op *QuoteFunc) Evaluate() (Node, error) {
 	return nil, nil
 }

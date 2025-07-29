@@ -4,41 +4,41 @@ import "fmt"
 
 // A List
 
-type AtomOp struct {
+type AtomFunc struct {
 	BaseNode
 	entries []Node
 }
 
-func NewAtomOp(line int, position int) *AtomOp {
-	return &AtomOp{BaseNode: BaseNode{line, position}}
+func NewAtomOp(line int, position int) *AtomFunc {
+	return &AtomFunc{BaseNode: BaseNode{line, position}}
 }
 
-func (op *AtomOp) String() string {
+func (op *AtomFunc) String() string {
 	return "Atom Operator"
 }
 
-func (op *AtomOp) AppendNode(n Node) {
+func (op *AtomFunc) AppendNode(n Node) {
 	op.entries = append(op.entries, n)
 }
 
 // Interface Node
-func (op *AtomOp) QuotedValue() Node {
+func (op *AtomFunc) QuotedValue() Node {
 	return NewAtom("atom", op.Line(), op.Position())
 }
 
-func (op *AtomOp) Line() int {
+func (op *AtomFunc) Line() int {
 	return op.BaseNode.Line
 }
 
-func (op *AtomOp) Position() int {
+func (op *AtomFunc) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *AtomOp) Children() []Node {
+func (op *AtomFunc) Children() []Node {
 	return op.entries
 }
 
-func (op *AtomOp) SyntaxCheck() error {
+func (op *AtomFunc) SyntaxCheck() error {
 	// Only one argument for quote
 	if len(op.entries) != 1 {
 		return fmt.Errorf("atom operator requires only 1 argument, line %d, position %d", op.Line(), op.Position())
@@ -46,6 +46,6 @@ func (op *AtomOp) SyntaxCheck() error {
 	return nil
 }
 
-func (op *AtomOp) Evaluate() (Node, error) {
+func (op *AtomFunc) Evaluate() (Node, error) {
 	return nil, nil
 }
