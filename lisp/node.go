@@ -2,7 +2,7 @@ package lisp
 
 // Interface for a basic node in the AST
 type Node interface {
-	// Get a human readable explaintion of the node type
+	// Get a human readable explanation of the node type
 	NodeType() string
 	// What line of the source was this on?
 	Line() int
@@ -16,6 +16,12 @@ type ListNode interface {
 	// Used to walk the tree
 	Children() []Node
 	AppendNode(n Node)
+}
+
+// Can this node be evaluated?
+type EvaluatableNode interface {
+	Node
+	Evaluate(env *Env, inQuote bool) (Node, error)
 }
 
 // Common parts of a Concrete Node type

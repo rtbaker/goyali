@@ -1,5 +1,10 @@
 package lisp
 
+import (
+	"fmt"
+	"strings"
+)
+
 // A List
 
 type List struct {
@@ -13,10 +18,21 @@ func NewList(line int, position int) *List {
 
 func (list *List) String() string {
 	if len(list.entries) > 0 {
-		return "List"
+		var b strings.Builder
+		b.WriteString("(")
+
+		for i, child := range list.entries {
+			if i > 0 {
+				b.WriteString(" ")
+			}
+			b.WriteString(fmt.Sprintf("%s", child))
+		}
+
+		b.WriteString(")")
+		return b.String()
 	}
 
-	return "Empty List"
+	return "()"
 }
 
 func (list *List) isEmptyList() bool {
@@ -48,6 +64,29 @@ func (list *List) SyntaxCheck() error {
 	return nil
 }
 
-func (list *List) Evaluate(inQuote bool) (Node, error) {
-	return nil, nil
+func (list *List) Evaluate(env *Env, inQuote bool) (Node, error) {
+	// empty/quoted list evaluates as itself
+	if len(list.entries) == 0 || inQuote {
+		return list, nil
+	}
+
+	// Otherwise the first child must be a function
+	firstNode := list.entries[0]
+	eFirstNode, err := EvaluateNode(firstNode, env, inQuote)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if lFunc, ok := eFirstNode.(LispFunction); ok {
+		retNode, err := lFunc.Run(list.entries[1:], env)
+
+		if err != nil {
+			return nil, err
+		}
+
+		return retNode, nil
+	} else {
+		return nil, fmt.Errorf("undefined function %s, line %d, position %d", firstNode, firstNode.Line(), firstNode.Position())
+	}
 }

@@ -11,6 +11,9 @@ func NewProgram() *Program {
 	// top level symbol table
 	env := NewEnv(nil)
 
+	// Add the builtin functions here
+	env.addSymbol("quote", NewQuoteOp(0, 0))
+
 	return &Program{
 		env: env,
 	}

@@ -16,7 +16,7 @@ func NewAtom(name string, line int, position int) *Atom {
 }
 
 func (atom *Atom) String() string {
-	return fmt.Sprintf("Atom: %s", atom.Name)
+	return atom.Name
 }
 
 // Interface Node
@@ -45,9 +45,16 @@ func (atom *Atom) SyntaxCheck() error {
 	return nil
 }
 
-func (atom *Atom) Evaluate(inQuote bool) (Node, error) {
+func (atom *Atom) Evaluate(env *Env, inQuote bool) (Node, error) {
 	if inQuote {
 		return atom, nil
 	}
-	return nil, nil
+
+	retNode := env.getSymbol(atom.Name)
+
+	if retNode == nil {
+		return nil, fmt.Errorf("Atom \"%s\" has no value (line %d, position %d)", atom.Name, atom.Line(), atom.Position())
+	}
+
+	return retNode, nil
 }

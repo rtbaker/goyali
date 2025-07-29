@@ -22,6 +22,10 @@ func (env *Env) getSymbol(name string) Node {
 	var ok bool
 
 	if node, ok = env.symbols[name]; !ok {
+		if env.prev == nil {
+			return nil
+		}
+
 		return env.prev.getSymbol(name)
 	}
 

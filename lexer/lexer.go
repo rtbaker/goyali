@@ -20,10 +20,12 @@ func NewLexer(input *bufio.Reader) *Lexer {
 	l := new(Lexer)
 
 	l.in = input
-	l.currentRune = ' '
 	l.eof = false
-	l.pos = 1
+	l.pos = 0
 	l.line = 1
+
+	// load first one
+	l.currentRune, _, _ = l.ReadRune()
 
 	return l
 }
@@ -57,13 +59,13 @@ func (lex *Lexer) GetToken() (*Token, error) {
 	if unicode.IsSpace(lex.currentRune) {
 		if lex.currentRune == '\n' {
 			lex.line++
-			lex.pos = 1
+			lex.pos = 0
 		}
 
 		for lex.currentRune, _, err = lex.ReadRune(); unicode.IsSpace(lex.currentRune) && err == nil; {
 			if lex.currentRune == '\n' {
 				lex.line++
-				lex.pos = 1
+				lex.pos = 0
 			}
 
 			lex.currentRune, _, err = lex.ReadRune()

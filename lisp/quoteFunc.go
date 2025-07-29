@@ -50,6 +50,17 @@ func (op *QuoteFunc) SyntaxCheck() error {
 	return nil
 }
 
-func (op *QuoteFunc) Run(args []Node) (Node, error) {
-	return nil, nil
+func (op *QuoteFunc) Run(args []Node, env *Env) (Node, error) {
+	// Only one argument for quote
+	if len(args) != 1 {
+		return nil, fmt.Errorf("quote operator requires only 1 argument")
+	}
+
+	retNode, err := EvaluateNode(args[0], env, true)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return retNode, nil
 }
