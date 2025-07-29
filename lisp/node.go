@@ -2,8 +2,8 @@ package lisp
 
 // Interface for a basic node in the AST
 type Node interface {
-	// Evaluate (implicitly walks children), returns a pointer to a Node type as the result (or nil)
-	Evaluate() (Node, error)
+	// Get a human readable explaintion of the node type
+	NodeType() string
 	// What line of the source was this on?
 	Line() int
 	// Position

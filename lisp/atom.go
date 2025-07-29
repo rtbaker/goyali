@@ -20,8 +20,8 @@ func (atom *Atom) String() string {
 }
 
 // Interface Node
-func (atom *Atom) QuotedValue() Node {
-	return atom
+func (atom *Atom) NodeType() string {
+	return "Atom"
 }
 
 func (atom *Atom) Line() int {
@@ -45,6 +45,9 @@ func (atom *Atom) SyntaxCheck() error {
 	return nil
 }
 
-func (atom *Atom) Evaluate() (Node, error) {
+func (atom *Atom) Evaluate(inQuote bool) (Node, error) {
+	if inQuote {
+		return atom, nil
+	}
 	return nil, nil
 }

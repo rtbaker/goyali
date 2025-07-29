@@ -22,6 +22,10 @@ func (op *EqualsFunc) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *EqualsFunc) NodeType() string {
+	return "Equals Function"
+}
+
 func (op *EqualsFunc) QuotedValue() Node {
 	return NewAtom("eq", op.Line(), op.Position())
 }
@@ -46,6 +50,6 @@ func (op *EqualsFunc) SyntaxCheck() error {
 	return nil
 }
 
-func (op *EqualsFunc) Evaluate() (Node, error) {
+func (op *EqualsFunc) Run(args []Node) (Node, error) {
 	return nil, nil
 }

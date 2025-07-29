@@ -22,6 +22,10 @@ func (op *AtomFunc) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *AtomFunc) NodeType() string {
+	return "Atom Function"
+}
+
 func (op *AtomFunc) QuotedValue() Node {
 	return NewAtom("atom", op.Line(), op.Position())
 }
@@ -46,6 +50,6 @@ func (op *AtomFunc) SyntaxCheck() error {
 	return nil
 }
 
-func (op *AtomFunc) Evaluate() (Node, error) {
+func (op *AtomFunc) Run(args []Node) (Node, error) {
 	return nil, nil
 }

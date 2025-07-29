@@ -22,6 +22,10 @@ func (op *LambdaFunc) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *LambdaFunc) NodeType() string {
+	return "Lambda Function"
+}
+
 func (op *LambdaFunc) QuotedValue() Node {
 	return NewAtom("lambda", op.Line(), op.Position())
 }
@@ -65,6 +69,6 @@ func (op *LambdaFunc) SyntaxCheck() error {
 	return nil
 }
 
-func (op *LambdaFunc) Evaluate() (Node, error) {
+func (op *LambdaFunc) Run(args []Node) (Node, error) {
 	return nil, nil
 }

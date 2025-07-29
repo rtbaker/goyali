@@ -4,5 +4,5 @@ package lisp
 // thing in a list that is being eval'ed and not quoted
 
 type function interface {
-	Run() (Node, error)
+	Run(args []Node) (Node, error)
 }

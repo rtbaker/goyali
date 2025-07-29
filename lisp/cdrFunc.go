@@ -22,6 +22,10 @@ func (op *CdrFunc) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *CdrFunc) NodeType() string {
+	return "Cdr Function"
+}
+
 func (op *CdrFunc) QuotedValue() Node {
 	return NewAtom("cdr", op.Line(), op.Position())
 }
@@ -46,6 +50,6 @@ func (op *CdrFunc) SyntaxCheck() error {
 	return nil
 }
 
-func (op *CdrFunc) Evaluate() (Node, error) {
+func (op *CdrFunc) Run(args []Node) (Node, error) {
 	return nil, nil
 }

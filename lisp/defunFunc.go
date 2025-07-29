@@ -20,6 +20,10 @@ func (op *DefunFunc) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *DefunFunc) NodeType() string {
+	return "Defun Function"
+}
+
 func (op *DefunFunc) QuotedValue() Node {
 	return NewAtom("defun", op.Line(), op.Position())
 }
@@ -69,6 +73,6 @@ func (op *DefunFunc) SyntaxCheck() error {
 	return nil
 }
 
-func (op *DefunFunc) Evaluate() (Node, error) {
+func (op *DefunFunc) Run(args []Node) (Node, error) {
 	return nil, nil
 }

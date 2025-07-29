@@ -22,6 +22,10 @@ func (op *LabelFunc) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *LabelFunc) NodeType() string {
+	return "Label Function"
+}
+
 func (op *LabelFunc) QuotedValue() Node {
 	return NewAtom("label", op.Line(), op.Position())
 }
@@ -52,6 +56,6 @@ func (op *LabelFunc) SyntaxCheck() error {
 	return nil
 }
 
-func (op *LabelFunc) Evaluate() (Node, error) {
+func (op *LabelFunc) Run(args []Node) (Node, error) {
 	return nil, nil
 }

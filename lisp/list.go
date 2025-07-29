@@ -28,6 +28,10 @@ func (list *List) AppendNode(n Node) {
 }
 
 // Interface Node
+func (list *List) NodeType() string {
+	return "List"
+}
+
 func (list *List) Line() int {
 	return list.BaseNode.Line
 }
@@ -44,6 +48,6 @@ func (list *List) SyntaxCheck() error {
 	return nil
 }
 
-func (list *List) Evaluate() (Node, error) {
+func (list *List) Evaluate(inQuote bool) (Node, error) {
 	return nil, nil
 }

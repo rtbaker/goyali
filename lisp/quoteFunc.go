@@ -22,6 +22,10 @@ func (op *QuoteFunc) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *QuoteFunc) NodeType() string {
+	return "Quote Function"
+}
+
 func (op *QuoteFunc) QuotedValue() Node {
 	return NewAtom("quote", op.Position(), op.Line())
 }
@@ -46,6 +50,6 @@ func (op *QuoteFunc) SyntaxCheck() error {
 	return nil
 }
 
-func (op *QuoteFunc) Evaluate() (Node, error) {
+func (op *QuoteFunc) Run(args []Node) (Node, error) {
 	return nil, nil
 }

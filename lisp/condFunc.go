@@ -22,6 +22,10 @@ func (op *CondFunc) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *CondFunc) NodeType() string {
+	return "Cond Function"
+}
+
 func (op *CondFunc) QuotedValue() Node {
 	return NewAtom("cond", op.Line(), op.Position())
 }
@@ -53,6 +57,6 @@ func (op *CondFunc) SyntaxCheck() error {
 	return nil
 }
 
-func (op *CondFunc) Evaluate() (Node, error) {
+func (op *CondFunc) Run(args []Node) (Node, error) {
 	return nil, nil
 }

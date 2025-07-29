@@ -22,6 +22,10 @@ func (op *ConsFunc) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *ConsFunc) NodeType() string {
+	return "Cons Function"
+}
+
 func (op *ConsFunc) QuotedValue() Node {
 	return NewAtom("cons", op.Line(), op.Position())
 }
@@ -46,6 +50,6 @@ func (op *ConsFunc) SyntaxCheck() error {
 	return nil
 }
 
-func (op *ConsFunc) Evaluate() (Node, error) {
+func (op *ConsFunc) Run(args []Node) (Node, error) {
 	return nil, nil
 }

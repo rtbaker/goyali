@@ -3,7 +3,17 @@ package lisp
 // Top level, a list of expressions
 
 type Program struct {
+	env         *Env
 	Expressions []Node
+}
+
+func NewProgram() *Program {
+	// top level symbol table
+	env := NewEnv(nil)
+
+	return &Program{
+		env: env,
+	}
 }
 
 func (prog *Program) String() string {

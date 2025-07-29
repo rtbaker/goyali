@@ -22,6 +22,10 @@ func (op *CarFunc) AppendNode(n Node) {
 }
 
 // Interface Node
+func (op *CarFunc) NodeType() string {
+	return "Car Function"
+}
+
 func (op *CarFunc) QuotedValue() Node {
 	return NewAtom("car", op.Line(), op.Position())
 }
@@ -46,6 +50,6 @@ func (op *CarFunc) SyntaxCheck() error {
 	return nil
 }
 
-func (op *CarFunc) Evaluate() (Node, error) {
+func (op *CarFunc) Run(args []Node) (Node, error) {
 	return nil, nil
 }

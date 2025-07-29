@@ -23,7 +23,7 @@ func NewParser(lexer *lexer.Lexer) *Parser {
 }
 
 func (parser *Parser) Parse() (*lisp.Program, error) {
-	top := &lisp.Program{}
+	top := lisp.NewProgram()
 
 	var err error
 	parser.lookahead, err = parser.lexer.GetToken()
