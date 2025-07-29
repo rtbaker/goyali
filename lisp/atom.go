@@ -5,18 +5,18 @@ import "fmt"
 // A basic atom
 type Atom struct {
 	BaseNode
-	Value string
+	Name string
 }
 
-func NewAtom(val string, line int, position int) *Atom {
+func NewAtom(name string, line int, position int) *Atom {
 	return &Atom{
 		BaseNode: BaseNode{line, position},
-		Value:    val,
+		Name:     name,
 	}
 }
 
 func (atom *Atom) String() string {
-	return fmt.Sprintf("Atom: %s", atom.Value)
+	return fmt.Sprintf("Atom: %s", atom.Name)
 }
 
 // Interface Node
@@ -37,7 +37,7 @@ func (atom *Atom) Children() []Node {
 }
 
 func (atom *Atom) SyntaxCheck() error {
-	if len(atom.Value) == 0 {
+	if len(atom.Name) == 0 {
 		// Not sure how this would happen but it's not right
 		return fmt.Errorf("zero length atom value, line %d position %d", atom.Line(), atom.Position())
 	}
