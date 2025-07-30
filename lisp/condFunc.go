@@ -57,6 +57,40 @@ func (op *CondFunc) SyntaxCheck() error {
 	return nil
 }
 
-func (op *CondFunc) Run(args []Node) (Node, error) {
-	return nil, nil
+func (op *CondFunc) Run(args []Node, env *Env) (Node, error) {
+	for _, arg := range args {
+		// each argument is a list of 2 things, a test and an expression
+		var listArg *List
+		var ok bool
+
+		if listArg, ok = arg.(*List); !ok {
+			return nil, fmt.Errorf("argument to cond must be a list, line %d, position %d", arg.Line(), arg.Position())
+		}
+
+		// Only one argument for quote
+		if len(listArg.Children()) != 2 {
+			return nil, fmt.Errorf("cond argument must be a list of 2 items, test and expression, line %d, position %d", arg.Line(), arg.Position())
+		}
+
+		retNode1, err := EvaluateNode(listArg.Children()[0], env, false)
+
+		if err != nil {
+			return nil, err
+		}
+
+		if !IsTrue(retNode1) {
+			continue
+		}
+
+		retNode2, err := EvaluateNode(listArg.Children()[1], env, false)
+
+		if err != nil {
+			return nil, err
+		}
+
+		return retNode2, nil
+	}
+
+	// no match, return a "NIL" atom
+	return NilAtom(), nil
 }

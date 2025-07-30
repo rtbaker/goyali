@@ -49,8 +49,10 @@ func main() {
 		{Name: "Cons OP", Code: "(cons 'a (cons 'b (cons 'c '())))"},
 		{Name: "Car Cons OP", Code: "(car (cons 'a '(b c)))"},
 		{Name: "Cdr Cons OP", Code: "(cdr (cons 'a '(b c)))"},
+		{Name: "Cond OP", Code: "(cond ((eq 'a 'b) 'first) ((atom 'a) 'second))"},
+		{Name: "Cond OP", Code: "(cond ((eq 'a 'a) 'first) ((atom 'a) 'second))"},
+		{Name: "Cond OP", Code: "(cond ((eq 'a 'b) 'first) ((eq 'a 'b) 'second))"},
 		/*
-			{Name: "Cond OP", Code: "(cond ((eq a b) first) ((atom a) second))"},
 			{Name: "Cond OP 2", Code: "(cond (y 't) ('t '()))"},
 			{Name: "Lambda", Code: "(lambda (x) (cons x (b)))"},
 			{Name: "Lambda with args", Code: "((lambda (x) (cons x (b))) a)"},

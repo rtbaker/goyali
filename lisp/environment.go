@@ -40,4 +40,5 @@ func (env *Env) initialiseBuiltin() {
 	env.addSymbol("car", NewCarOp(0, 0))
 	env.addSymbol("cdr", NewCdrOp(0, 0))
 	env.addSymbol("cons", NewConsOp(0, 0))
+	env.addSymbol("cond", NewCondOp(0, 0))
 }

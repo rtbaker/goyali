@@ -31,6 +31,7 @@ type BaseNode struct {
 	Position int
 }
 
+// Misc' routines for dealing with basic node things
 func NodeIsAtom(n Node) bool {
 	_, ok := n.(*Atom)
 	return ok
@@ -40,6 +41,26 @@ func Truth() Node {
 	return NewAtom("t", 0, 0)
 }
 
+func IsTrue(n Node) bool {
+	if nodeAtom, ok := n.(*Atom); ok {
+		return nodeAtom.Name == "t"
+	}
+
+	return false
+}
+
 func Falsity() Node {
 	return NewList(0, 0) // empty list is false
+}
+
+func IsFalse(n Node) bool {
+	if nodeList, ok := n.(*List); ok {
+		return len(nodeList.entries) == 0
+	}
+
+	return false
+}
+
+func NilAtom() Node {
+	return NewAtom("NIL", 0, 0)
 }
