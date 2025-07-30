@@ -50,6 +50,32 @@ func (op *CdrFunc) SyntaxCheck() error {
 	return nil
 }
 
-func (op *CdrFunc) Run(args []Node) (Node, error) {
-	return nil, nil
+func (op *CdrFunc) Run(args []Node, env *Env) (Node, error) {
+	// Only one argument for quote
+	if len(args) != 1 {
+		return nil, fmt.Errorf("cdr operator requires only 1 argument")
+	}
+
+	retNode, err := EvaluateNode(args[0], env, false)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if listNode, ok := retNode.(*List); ok {
+		// Empty list, returns as an empty list
+		if len(listNode.Children()) == 0 {
+			return NewList(0, 0), nil
+		}
+
+		retList := NewList(0, 0)
+
+		for _, node := range listNode.Children()[1:] {
+			retList.AppendNode(node)
+		}
+
+		return retList, nil
+	}
+
+	return nil, fmt.Errorf("cdr operator requires a list as its argument")
 }

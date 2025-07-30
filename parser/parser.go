@@ -32,12 +32,19 @@ func (parser *Parser) Parse() (*lisp.Program, error) {
 		return nil, err
 	}
 
-	for expr, err := parser.getExpression(); expr != nil; expr, err = parser.getExpression() {
+	var expr lisp.Node
+
+	for expr, err = parser.getExpression(); expr != nil; expr, err = parser.getExpression() {
 		if err != nil {
 			return nil, err
 		}
 
 		top.AppendNode(expr)
+	}
+
+	// catch error in last iteration of loop
+	if err != nil {
+		return nil, err
 	}
 
 	return top, nil
@@ -114,7 +121,7 @@ func (parser *Parser) getList() (lisp.Node, error) {
 	list := lisp.NewList(line, pos)
 
 	// Keep adding children/entries until the list is closed
-	for parser.lookahead.Code != lexer.CLOSEPARENS {
+	for parser.lookahead.Code != lexer.CLOSEPARENS && parser.lookahead.Code != lexer.EOF {
 		exp, err := parser.getExpression()
 		if err != nil {
 			return nil, err
@@ -140,6 +147,6 @@ func (parser *Parser) match(nodeType lexer.TokenCode) error {
 		return err
 	}
 
-	return fmt.Errorf("expected token code: %d, got %d at line %d, position %d",
-		nodeType, parser.lookahead.Code, parser.lookahead.Line, parser.lookahead.Position)
+	return fmt.Errorf("expected token code: %s, got %s at line %d, position %d",
+		lexer.TokenCodeString(nodeType), lexer.TokenCodeString(parser.lookahead.Code), parser.lookahead.Line, parser.lookahead.Position)
 }

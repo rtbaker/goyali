@@ -48,6 +48,8 @@ func (lex *Lexer) ReadRune() (rune, int, error) {
 func (lex *Lexer) GetToken() (*Token, error) {
 	tok := new(Token)
 	tok.Code = EOF
+	tok.Line = lex.line
+	tok.Position = lex.pos
 
 	if lex.eof {
 		return tok, nil

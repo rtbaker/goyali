@@ -15,6 +15,8 @@ func NewProgram() *Program {
 	env.addSymbol("quote", NewQuoteOp(0, 0))
 	env.addSymbol("atom", NewAtomOp(0, 0))
 	env.addSymbol("eq", NewEqualsOp(0, 0))
+	env.addSymbol("car", NewCarOp(0, 0))
+	env.addSymbol("cdr", NewCdrOp(0, 0))
 
 	return &Program{
 		env: env,

@@ -17,6 +17,7 @@ type LispTest struct {
 
 func main() {
 	tests := []LispTest{
+
 		{Name: "Simple Atom", Code: "foo"},
 		{Name: "Empty List", Code: "()"},
 		{Name: "Quote op atom", Code: "(quote a)"},
@@ -34,12 +35,15 @@ func main() {
 		{Name: "equals atom atom", Code: "(eq a b)"},
 		{Name: "equals qatom qatom same", Code: "(eq 'a 'a)"},
 		{Name: "equals qatom qatom not the same", Code: "(eq 'a 'b)"},
+		{Name: "Car OP", Code: "(car (a b c))"},
+		{Name: "Car OP", Code: "(car '(a b c))"},
+		{Name: "Car OP", Code: "(car 'a)"},
+		{Name: "Car OP", Code: "(car (car '(a b c)))"},
+		{Name: "Cdr OP", Code: "(cdr (a b c))"},
+		{Name: "Cdr OP", Code: "(cdr '(a b c))"},
+
+		{Name: "Cdr OP", Code: "(cdr (cdr '(a b c))"},
 		/*
-			{Name: "Equals op atom", Code: "(eq a b)"},
-			{Name: "Equals op empty lists", Code: "(eq () ())"},
-			{Name: "Equals op empty list and atom", Code: "(eq a (b c))"},
-			{Name: "Car OP", Code: "(car (a b c))"},
-			{Name: "Cdr OP", Code: "(cdr (a b c))"},
 			{Name: "Cons OP", Code: "(cons a (b c d))"},
 			{Name: "Cond OP", Code: "(cond ((eq a b) first) ((atom a) second))"},
 			{Name: "Cond OP 2", Code: "(cond (y 't) ('t '()))"},
@@ -72,12 +76,12 @@ func main() {
 		myParser := parser.NewParser(lex)
 		program, err := myParser.Parse()
 
+		fmt.Printf("Test: %s\n", test.Name)
+
 		if err != nil {
-			fmt.Printf("%s case error: %s", test.Name, err)
+			fmt.Printf("parse error: %s\n", err)
 			return
 		}
-
-		fmt.Printf("Test: %s\n", test.Name)
 
 		/*
 			for _, expression := range program.Children() {

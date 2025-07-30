@@ -52,6 +52,23 @@ func (tok *Token) String() string {
 	return fmt.Sprintf("%s\t\t\t(Line %d, position %d)", name, tok.Line, tok.Position)
 }
 
+func TokenCodeString(code TokenCode) string {
+	switch code {
+	case EOF:
+		return "EOF"
+	case SHORTQUOTE:
+		return "SHORTQUOTE"
+	case ATOM:
+		return "ATOM"
+	case OPENPARENS:
+		return "OPENPARENS"
+	case CLOSEPARENS:
+		return "CLOSEPARENS"
+	}
+
+	return fmt.Sprintf("%d", code)
+}
+
 func StringToTokenType(val string) TokenCode {
 	val = strings.ToUpper(val)
 
