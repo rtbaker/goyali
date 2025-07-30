@@ -8,7 +8,6 @@ import (
 
 	"github.com/rtbaker/goyali/lexer"
 	"github.com/rtbaker/goyali/lisp"
-	"github.com/rtbaker/goyali/parser"
 )
 
 type LispTest struct {
@@ -88,7 +87,7 @@ func main() {
 
 		lex := lexer.NewLexer(reader)
 
-		myParser := parser.NewParser(lex)
+		myParser := lisp.NewParser(lex)
 		program, err := myParser.ParseProgram()
 
 		if err != nil {

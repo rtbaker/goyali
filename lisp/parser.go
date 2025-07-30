@@ -1,10 +1,9 @@
-package parser
+package lisp
 
 import (
 	"fmt"
 
 	"github.com/rtbaker/goyali/lexer"
-	"github.com/rtbaker/goyali/lisp"
 )
 
 // Takes a stream of tokens from the lexer and returns lists and atoms
@@ -22,8 +21,8 @@ func NewParser(lexer *lexer.Lexer) *Parser {
 	return parser
 }
 
-func (parser *Parser) ParseProgram() (*lisp.Program, error) {
-	top := lisp.NewProgram()
+func (parser *Parser) ParseProgram() (*Program, error) {
+	top := NewProgram()
 
 	var err error
 	parser.lookahead, err = parser.lexer.GetToken()
@@ -32,7 +31,7 @@ func (parser *Parser) ParseProgram() (*lisp.Program, error) {
 		return nil, err
 	}
 
-	var expr lisp.Node
+	var expr Node
 
 	for expr, err = parser.getExpression(); expr != nil; expr, err = parser.getExpression() {
 		if err != nil {
@@ -50,13 +49,13 @@ func (parser *Parser) ParseProgram() (*lisp.Program, error) {
 	return top, nil
 }
 
-func (parser *Parser) getExpression() (lisp.Node, error) {
+func (parser *Parser) getExpression() (Node, error) {
 	if parser.lookahead.Code == lexer.EOF {
 		return nil, nil
 	}
 
 	if parser.lookahead.Code == lexer.ATOM {
-		atom := lisp.NewAtom(parser.lookahead.Value, parser.lookahead.Line, parser.lookahead.Position)
+		atom := NewAtom(parser.lookahead.Value, parser.lookahead.Line, parser.lookahead.Position)
 
 		// Consume token
 		err := parser.match(lexer.ATOM)
@@ -86,8 +85,8 @@ func (parser *Parser) getExpression() (lisp.Node, error) {
 			return nil, err
 		}
 
-		list := lisp.NewList(line, pos)
-		quoteAtom := lisp.NewAtom("quote", line, pos+1) // Line&position bug here, subsequent positions on this line are now wrong
+		list := NewList(line, pos)
+		quoteAtom := NewAtom("quote", line, pos+1) // Line&position bug here, subsequent positions on this line are now wrong
 
 		list.AppendNode(quoteAtom)
 
@@ -107,8 +106,8 @@ func (parser *Parser) getExpression() (lisp.Node, error) {
 		parser.lookahead.Line, parser.lookahead.Position)
 }
 
-// A list contains atoms or other lists
-func (parser *Parser) getList() (lisp.Node, error) {
+// A list contains atoms or other lists.Nod
+func (parser *Parser) getList() (Node, error) {
 	// Start
 	line := parser.lookahead.Line
 	pos := parser.lookahead.Position
@@ -118,7 +117,7 @@ func (parser *Parser) getList() (lisp.Node, error) {
 		return nil, fmt.Errorf("list start error: %s", err)
 	}
 
-	list := lisp.NewList(line, pos)
+	list := NewList(line, pos)
 
 	// Keep adding children/entries until the list is closed
 	for parser.lookahead.Code != lexer.CLOSEPARENS && parser.lookahead.Code != lexer.EOF {

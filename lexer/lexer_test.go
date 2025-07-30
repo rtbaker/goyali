@@ -47,10 +47,8 @@ func TestEmptyString(t *testing.T) {
 		t.Errorf("Lexer GetToken returned an error: %s", err)
 	}
 
-	expected := Token{Code: EOF}
-
-	if *token != expected {
-		t.Errorf("Lexer GetToken dod not return EOF Token: got %d ", token.Code)
+	if token.Code != EOF {
+		t.Errorf("Lexer GetToken did not return EOF Token: got %d ", token.Code)
 	}
 }
 
@@ -154,9 +152,7 @@ func TestEOFAfterMultipleTokens(t *testing.T) {
 	}
 
 	// Last token should be EOF
-	expected := Token{Code: EOF}
-
-	if *token != expected {
+	if token.Code != EOF {
 		t.Errorf("Lexer GetToken dod not return EOF Token: got %d ", token.Code)
 	}
 }
