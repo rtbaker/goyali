@@ -89,7 +89,7 @@ func main() {
 		lex := lexer.NewLexer(reader)
 
 		myParser := parser.NewParser(lex)
-		program, err := myParser.Parse()
+		program, err := myParser.ParseProgram()
 
 		if err != nil {
 			fmt.Printf("parse error: %s\n", err)

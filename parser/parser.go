@@ -22,7 +22,7 @@ func NewParser(lexer *lexer.Lexer) *Parser {
 	return parser
 }
 
-func (parser *Parser) Parse() (*lisp.Program, error) {
+func (parser *Parser) ParseProgram() (*lisp.Program, error) {
 	top := lisp.NewProgram()
 
 	var err error
