@@ -52,9 +52,11 @@ func main() {
 		{Name: "Cond OP", Code: "(cond ((eq 'a 'b) 'first) ((atom 'a) 'second))"},
 		{Name: "Cond OP", Code: "(cond ((eq 'a 'a) 'first) ((atom 'a) 'second))"},
 		{Name: "Cond OP", Code: "(cond ((eq 'a 'b) 'first) ((eq 'a 'b) 'second))"},
+		{Name: "Lambda", Code: "(lambda (x) (cons x '(b)))"},
+		{Name: "Lambda run", Code: "((lambda (x) (cons x '(b))) 'a)"},
+		{Name: "Lambda run", Code: "((lambda (x y) (cons x (cdr y))) 'z '(a b c))"},
+		{Name: "Lambda run no args", Code: "((lambda () 'a))"},
 		/*
-			{Name: "Cond OP 2", Code: "(cond (y 't) ('t '()))"},
-			{Name: "Lambda", Code: "(lambda (x) (cons x (b)))"},
 			{Name: "Lambda with args", Code: "((lambda (x) (cons x (b))) a)"},
 			{Name: "Defun op", Code: "(defun subst (a b c) (cons x (b)))"},
 			{Name: "Label", Code: "(label f (lambda (x y z) (cons x(b))))"},

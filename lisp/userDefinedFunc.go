@@ -1,5 +1,7 @@
 package lisp
 
+import "fmt"
+
 // A List
 
 type UserDefinedFunc struct {
@@ -8,12 +10,26 @@ type UserDefinedFunc struct {
 	expression Node
 }
 
-func NewUserDefinedFunc(args []Node, expression Node) *UserDefinedFunc {
-	return &UserDefinedFunc{
+func NewUserDefinedFunc(args Node, expression Node) (*UserDefinedFunc, error) {
+	userFunc := &UserDefinedFunc{
 		BaseNode:   BaseNode{0, 0},
-		args:       args,
 		expression: expression,
 	}
+
+	// Args must be a list atoms
+	if argList, ok := args.(*List); ok {
+		for i, child := range argList.Children() {
+			if _, ok := child.(*Atom); !ok {
+				return nil, fmt.Errorf("function arguments must be atoms (argument %d is not)", i)
+			}
+		}
+
+		userFunc.args = argList.Children()
+	} else {
+		return nil, fmt.Errorf("function args must be a list")
+	}
+
+	return userFunc, nil
 }
 
 func (op *UserDefinedFunc) String() string {
@@ -34,5 +50,24 @@ func (op *UserDefinedFunc) Position() int {
 }
 
 func (op *UserDefinedFunc) Run(args []Node, env *Env) (Node, error) {
-	return nil, nil
+	if len(args) != len(op.args) {
+		return nil, fmt.Errorf("wring number of arguments to function, %d required, %d given", len(op.args), len(args))
+	}
+
+	// create the symbol table for this run
+	funcEnv := NewEnv(env)
+
+	for i, requiredArg := range op.args {
+		argValue, err := EvaluateNode(args[i], funcEnv, false)
+
+		if err != nil {
+			return nil, fmt.Errorf("error evaluating argument to function (argument %d)", i)
+		}
+
+		// we check these were atoms so no need to check again
+		argAtom := requiredArg.(*Atom)
+		funcEnv.addSymbol(argAtom.Name, argValue)
+	}
+
+	return EvaluateNode(op.expression, funcEnv, false)
 }
