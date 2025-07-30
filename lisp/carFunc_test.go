@@ -27,7 +27,7 @@ func TestCarOp(t *testing.T) {
 			continue
 		}
 
-		t.Logf("--- %s -> %s", test.Code, output)
+		t.Logf("*** %s -> %s", test.Code, output)
 
 		if output != test.Expected {
 			t.Errorf("expression output incorrect, expected \"%s\" got \"%s\"", test.Expected, output)

@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/rtbaker/goyali/lexer"
-	"github.com/rtbaker/goyali/parser"
 )
 
 type SimpleTest struct {
@@ -19,7 +18,7 @@ type SimpleTest struct {
 func runExpression(expr string) (string, error) {
 	reader := bufio.NewReader(strings.NewReader(expr))
 	lex := lexer.NewLexer(reader)
-	myParser := parser.NewParser(lex)
+	myParser := NewParser(lex)
 
 	program, err := myParser.ParseProgram()
 
@@ -37,7 +36,7 @@ func runExpression(expr string) (string, error) {
 		}
 
 		if !IsNil(retNode) {
-			b.WriteString(fmt.Sprintf("%s\n", retNode))
+			b.WriteString(fmt.Sprintf("%s", retNode))
 		}
 	}
 
