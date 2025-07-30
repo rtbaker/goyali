@@ -50,6 +50,41 @@ func (op *ConsFunc) SyntaxCheck() error {
 	return nil
 }
 
-func (op *ConsFunc) Run(args []Node) (Node, error) {
-	return nil, nil
+func (op *ConsFunc) Run(args []Node, env *Env) (Node, error) {
+	// Only one argument for quote
+	if len(args) != 2 {
+		return nil, fmt.Errorf("cons operator requires 2 arguments")
+	}
+
+	retNode1, err := EvaluateNode(args[0], env, false)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Arg one must evaluate a value (some single item?) so check it's not a list
+	// (at some point with a type system this will be more complicated)
+	if _, ok := retNode1.(*List); ok {
+		return nil, fmt.Errorf("cons operator cannot take a list as the first argument")
+	}
+
+	retNode2, err := EvaluateNode(args[1], env, false)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// arg 2 must be a list
+	var listArg ListNode
+	var ok bool
+
+	if listArg, ok = retNode2.(*List); !ok {
+		return nil, fmt.Errorf("cons operator requires a list for the second argument")
+	}
+
+	retList := NewList(0, 0)
+	retList.AppendNode(retNode1)
+	retList.AppendNodes(listArg.Children())
+
+	return retList, nil
 }

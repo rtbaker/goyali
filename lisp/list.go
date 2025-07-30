@@ -43,6 +43,10 @@ func (list *List) AppendNode(n Node) {
 	list.entries = append(list.entries, n)
 }
 
+func (list *List) AppendNodes(nodes []Node) {
+	list.entries = append(list.entries, nodes...)
+}
+
 // Interface Node
 func (list *List) NodeType() string {
 	return "List"

@@ -10,13 +10,7 @@ type Program struct {
 func NewProgram() *Program {
 	// top level symbol table
 	env := NewEnv(nil)
-
-	// Add the builtin functions here
-	env.addSymbol("quote", NewQuoteOp(0, 0))
-	env.addSymbol("atom", NewAtomOp(0, 0))
-	env.addSymbol("eq", NewEqualsOp(0, 0))
-	env.addSymbol("car", NewCarOp(0, 0))
-	env.addSymbol("cdr", NewCdrOp(0, 0))
+	env.initialiseBuiltin()
 
 	return &Program{
 		env: env,

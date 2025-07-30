@@ -16,6 +16,7 @@ type ListNode interface {
 	// Used to walk the tree
 	Children() []Node
 	AppendNode(n Node)
+	AppendNodes(nodes []Node)
 }
 
 // Can this node be evaluated?

@@ -31,3 +31,13 @@ func (env *Env) getSymbol(name string) Node {
 
 	return node
 }
+
+func (env *Env) initialiseBuiltin() {
+	// Add the builtin functions here
+	env.addSymbol("quote", NewQuoteOp(0, 0))
+	env.addSymbol("atom", NewAtomOp(0, 0))
+	env.addSymbol("eq", NewEqualsOp(0, 0))
+	env.addSymbol("car", NewCarOp(0, 0))
+	env.addSymbol("cdr", NewCdrOp(0, 0))
+	env.addSymbol("cons", NewConsOp(0, 0))
+}
