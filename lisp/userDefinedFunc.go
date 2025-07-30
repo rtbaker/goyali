@@ -69,5 +69,7 @@ func (op *UserDefinedFunc) Run(args []Node, env *Env) (Node, error) {
 		funcEnv.addSymbol(argAtom.Name, argValue)
 	}
 
-	return EvaluateNode(op.expression, funcEnv, false)
+	node, err := EvaluateNode(op.expression, funcEnv, false)
+
+	return node, err
 }

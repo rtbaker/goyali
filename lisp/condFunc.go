@@ -67,7 +67,6 @@ func (op *CondFunc) Run(args []Node, env *Env) (Node, error) {
 			return nil, fmt.Errorf("argument to cond must be a list, line %d, position %d", arg.Line(), arg.Position())
 		}
 
-		// Only one argument for quote
 		if len(listArg.Children()) != 2 {
 			return nil, fmt.Errorf("cond argument must be a list of 2 items, test and expression, line %d, position %d", arg.Line(), arg.Position())
 		}

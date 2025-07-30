@@ -54,6 +54,10 @@ func Falsity() Node {
 }
 
 func IsFalse(n Node) bool {
+	return IsEmptyList(n)
+}
+
+func IsEmptyList(n Node) bool {
 	if nodeList, ok := n.(*List); ok {
 		return len(nodeList.entries) == 0
 	}
@@ -63,4 +67,12 @@ func IsFalse(n Node) bool {
 
 func NilAtom() Node {
 	return NewAtom("NIL", 0, 0)
+}
+
+func IsNil(n Node) bool {
+	if nodeAtom, ok := n.(*Atom); ok {
+		return nodeAtom.Name == "NIL"
+	}
+
+	return false
 }

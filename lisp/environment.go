@@ -42,4 +42,6 @@ func (env *Env) initialiseBuiltin() {
 	env.addSymbol("cons", NewConsOp(0, 0))
 	env.addSymbol("cond", NewCondOp(0, 0))
 	env.addSymbol("lambda", NewLambdaOp(0, 0))
+	env.addSymbol("label", NewLabelOp(0, 0))
+	env.addSymbol("defun", NewDefunOp(0, 0))
 }

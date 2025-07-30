@@ -10,7 +10,9 @@ func RunProgram(prog *Program) error {
 			return err
 		}
 
-		fmt.Printf("%s\n", retNode)
+		if !IsNil(retNode) {
+			fmt.Printf("%s\n", retNode)
+		}
 	}
 
 	return nil

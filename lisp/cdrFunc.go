@@ -63,8 +63,8 @@ func (op *CdrFunc) Run(args []Node, env *Env) (Node, error) {
 	}
 
 	if listNode, ok := retNode.(*List); ok {
-		// Empty list, returns as an empty list
-		if len(listNode.Children()) == 0 {
+		// Empty list, returns as nil
+		if len(listNode.Children()) <= 1 {
 			return NewList(0, 0), nil
 		}
 

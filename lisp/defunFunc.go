@@ -4,7 +4,6 @@ import "fmt"
 
 type DefunFunc struct {
 	BaseNode
-	entries []Node
 }
 
 func NewDefunOp(line int, position int) *DefunFunc {
@@ -15,17 +14,9 @@ func (op *DefunFunc) String() string {
 	return "Defun Operator"
 }
 
-func (op *DefunFunc) AppendNode(n Node) {
-	op.entries = append(op.entries, n)
-}
-
 // Interface Node
 func (op *DefunFunc) NodeType() string {
 	return "Defun Function"
-}
-
-func (op *DefunFunc) QuotedValue() Node {
-	return NewAtom("defun", op.Line(), op.Position())
 }
 
 func (op *DefunFunc) Line() int {
@@ -36,43 +27,26 @@ func (op *DefunFunc) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *DefunFunc) Children() []Node {
-	return op.entries
-}
-
-func (op *DefunFunc) SyntaxCheck() error {
-	if len(op.entries) != 3 {
-		return fmt.Errorf("defun op requires 3 arguments, line %d position %d", op.Line(), op.Position())
+func (op *DefunFunc) Run(args []Node, env *Env) (Node, error) {
+	// Only one argument for quote
+	if len(args) != 3 {
+		return nil, fmt.Errorf("defun operator requires 2 arguments")
 	}
 
-	// First arg is an atom
-	labelNode := op.entries[0]
+	var labelAtom *Atom
+	var ok bool
 
-	if _, ok := labelNode.(*Atom); !ok {
-		return fmt.Errorf("defun op first arg must be an atom, line %d position %d", op.Line(), op.Position())
+	if labelAtom, ok = args[0].(*Atom); !ok {
+		return nil, fmt.Errorf("defun op expects first argument to be an atom")
 	}
 
-	// second arg is a list of atoms
-	argsNode := op.entries[1]
+	userFunc, err := NewUserDefinedFunc(args[1], args[2])
 
-	if _, ok := argsNode.(*List); !ok {
-		return fmt.Errorf("defun op second arg must be a list, line %d position %d", op.Line(), op.Position())
+	if err != nil {
+		return nil, err
 	}
-	/*
-		allAtoms := true
-		for _, n := range argsNode.Children() {
-			if _, ok := n.(*Atom); !ok {
-				allAtoms = false
-			}
-		}
 
-		if !allAtoms {
-			return fmt.Errorf("defun op, arg list must all be atoms, line %d position %d", argsNode.Line(), argsNode.Position())
-		}
-	*/
-	return nil
-}
+	env.addSymbol(labelAtom.Name, userFunc)
 
-func (op *DefunFunc) Run(args []Node) (Node, error) {
-	return nil, nil
+	return NilAtom(), nil
 }

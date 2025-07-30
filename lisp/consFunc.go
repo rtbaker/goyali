@@ -62,12 +62,6 @@ func (op *ConsFunc) Run(args []Node, env *Env) (Node, error) {
 		return nil, err
 	}
 
-	// Arg one must evaluate a value (some single item?) so check it's not a list
-	// (at some point with a type system this will be more complicated)
-	if _, ok := retNode1.(*List); ok {
-		return nil, fmt.Errorf("cons operator cannot take a list as the first argument")
-	}
-
 	retNode2, err := EvaluateNode(args[1], env, false)
 
 	if err != nil {
