@@ -2,35 +2,34 @@ package lisp
 
 import "fmt"
 
-type DefunFunc struct {
+type DefunOp struct {
 	BaseNode
 }
 
-func NewDefunOp(line int, position int) *DefunFunc {
-	return &DefunFunc{BaseNode: BaseNode{line, position}}
+func NewDefunOp(line int, position int) *DefunOp {
+	return &DefunOp{BaseNode: BaseNode{line, position}}
 }
 
-func (op *DefunFunc) String() string {
+func (op *DefunOp) String() string {
 	return "Defun Operator"
 }
 
 // Interface Node
-func (op *DefunFunc) NodeType() string {
+func (op *DefunOp) NodeType() string {
 	return "Defun Function"
 }
 
-func (op *DefunFunc) Line() int {
+func (op *DefunOp) Line() int {
 	return op.BaseNode.Line
 }
 
-func (op *DefunFunc) Position() int {
+func (op *DefunOp) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *DefunFunc) Run(args []Node, env *Env) (Node, error) {
-	// Only one argument for quote
+func (op *DefunOp) Run(args []Node, env *Env) (Node, error) {
 	if len(args) != 3 {
-		return nil, fmt.Errorf("defun operator requires 2 arguments")
+		return nil, fmt.Errorf("defun operator requires 3 arguments")
 	}
 
 	var labelAtom *Atom

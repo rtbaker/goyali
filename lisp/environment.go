@@ -33,7 +33,7 @@ func (env *Env) getSymbol(name string) Node {
 }
 
 func (env *Env) initialiseBuiltin() {
-	// Add the builtin functions here
+	// Add the builtin operators/functions here
 	env.addSymbol("quote", NewQuoteOp(0, 0))
 	env.addSymbol("atom", NewAtomOp(0, 0))
 	env.addSymbol("eq", NewEqualsOp(0, 0))

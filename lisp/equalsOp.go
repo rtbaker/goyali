@@ -4,53 +4,32 @@ import "fmt"
 
 // A List
 
-type EqualsFunc struct {
+type EqualsOp struct {
 	BaseNode
-	entries []Node
 }
 
-func NewEqualsOp(line int, position int) *EqualsFunc {
-	return &EqualsFunc{BaseNode: BaseNode{line, position}}
+func NewEqualsOp(line int, position int) *EqualsOp {
+	return &EqualsOp{BaseNode: BaseNode{line, position}}
 }
 
-func (op *EqualsFunc) String() string {
+func (op *EqualsOp) String() string {
 	return "Equals Operator"
 }
 
-func (op *EqualsFunc) AppendNode(n Node) {
-	op.entries = append(op.entries, n)
-}
-
 // Interface Node
-func (op *EqualsFunc) NodeType() string {
+func (op *EqualsOp) NodeType() string {
 	return "Equals Function"
 }
 
-func (op *EqualsFunc) QuotedValue() Node {
-	return NewAtom("eq", op.Line(), op.Position())
-}
-
-func (op *EqualsFunc) Line() int {
+func (op *EqualsOp) Line() int {
 	return op.BaseNode.Line
 }
 
-func (op *EqualsFunc) Position() int {
+func (op *EqualsOp) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *EqualsFunc) Children() []Node {
-	return op.entries
-}
-
-func (op *EqualsFunc) SyntaxCheck() error {
-	// Only 2 arguments for eq
-	if len(op.entries) != 2 {
-		return fmt.Errorf("equals operator requires 2 arguments, line %d, position %d", op.Line(), op.Position())
-	}
-	return nil
-}
-
-func (op *EqualsFunc) Run(args []Node, env *Env) (Node, error) {
+func (op *EqualsOp) Run(args []Node, env *Env) (Node, error) {
 	// Only one argument for quote
 	if len(args) != 2 {
 		return nil, fmt.Errorf("equals operator requires 2 arguments")

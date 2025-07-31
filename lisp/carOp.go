@@ -4,32 +4,32 @@ import "fmt"
 
 // A List
 
-type CarFunc struct {
+type CarOp struct {
 	BaseNode
 }
 
-func NewCarOp(line int, position int) *CarFunc {
-	return &CarFunc{BaseNode: BaseNode{line, position}}
+func NewCarOp(line int, position int) *CarOp {
+	return &CarOp{BaseNode: BaseNode{line, position}}
 }
 
-func (op *CarFunc) String() string {
+func (op *CarOp) String() string {
 	return "Car Operator"
 }
 
 // Interface Node
-func (op *CarFunc) NodeType() string {
+func (op *CarOp) NodeType() string {
 	return "Car Function"
 }
 
-func (op *CarFunc) Line() int {
+func (op *CarOp) Line() int {
 	return op.BaseNode.Line
 }
 
-func (op *CarFunc) Position() int {
+func (op *CarOp) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *CarFunc) Run(args []Node, env *Env) (Node, error) {
+func (op *CarOp) Run(args []Node, env *Env) (Node, error) {
 	// Only one argument for quote
 	if len(args) != 1 {
 		return nil, fmt.Errorf("car operator requires only 1 argument")

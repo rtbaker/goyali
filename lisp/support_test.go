@@ -10,6 +10,7 @@ import (
 
 type SimpleTest struct {
 	Code          string
+	LoadFromFile  string
 	Expected      string
 	ExpectedError string
 }
@@ -28,16 +29,17 @@ func runExpression(expr string) (string, error) {
 
 	var b strings.Builder
 
-	for _, expression := range program.Expressions {
+	for index, expression := range program.Expressions {
 		retNode, err := EvaluateNode(expression, program.env, false)
 
 		if err != nil {
 			return "", err
 		}
 
-		if !IsNil(retNode) {
-			b.WriteString(fmt.Sprintf("%s", retNode))
+		if index > 0 {
+			b.WriteString("\n")
 		}
+		b.WriteString(fmt.Sprintf("%s", retNode))
 	}
 
 	return b.String(), nil

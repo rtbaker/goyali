@@ -22,10 +22,6 @@ func (prog *Program) String() string {
 }
 
 // Interface Node
-func (prog *Program) QuotedValue() Node {
-	return NewAtom("", 0, 0)
-}
-
 func (prog *Program) Line() int {
 	return 0
 }
@@ -40,12 +36,4 @@ func (prog *Program) Children() []Node {
 
 func (prog *Program) AppendNode(n Node) {
 	prog.Expressions = append(prog.Expressions, n)
-}
-
-func (prog *Program) SyntaxCheck() error {
-	return nil
-}
-
-func (prog *Program) Evaluate() (Node, error) {
-	return nil, nil
 }

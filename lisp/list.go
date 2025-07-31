@@ -64,10 +64,6 @@ func (list *List) Children() []Node {
 	return list.entries
 }
 
-func (list *List) SyntaxCheck() error {
-	return nil
-}
-
 func (list *List) Evaluate(env *Env, inQuote bool) (Node, error) {
 	// empty/quoted list evaluates as itself
 	if len(list.entries) == 0 || inQuote {

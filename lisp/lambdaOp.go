@@ -4,32 +4,32 @@ import "fmt"
 
 // A List
 
-type LambdaFunc struct {
+type LambdaOp struct {
 	BaseNode
 }
 
-func NewLambdaOp(line int, position int) *LambdaFunc {
-	return &LambdaFunc{BaseNode: BaseNode{line, position}}
+func NewLambdaOp(line int, position int) *LambdaOp {
+	return &LambdaOp{BaseNode: BaseNode{line, position}}
 }
 
-func (op *LambdaFunc) String() string {
+func (op *LambdaOp) String() string {
 	return "Lambda Operator"
 }
 
 // Interface Node
-func (op *LambdaFunc) NodeType() string {
+func (op *LambdaOp) NodeType() string {
 	return "Lambda Function"
 }
 
-func (op *LambdaFunc) Line() int {
+func (op *LambdaOp) Line() int {
 	return op.BaseNode.Line
 }
 
-func (op *LambdaFunc) Position() int {
+func (op *LambdaOp) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *LambdaFunc) Run(args []Node, env *Env) (Node, error) {
+func (op *LambdaOp) Run(args []Node, env *Env) (Node, error) {
 	// Only one argument for quote
 	if len(args) != 2 {
 		return nil, fmt.Errorf("lambda operator requires 2 arguments")

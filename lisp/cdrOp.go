@@ -4,32 +4,32 @@ import "fmt"
 
 // A List
 
-type CdrFunc struct {
+type CdrOp struct {
 	BaseNode
 }
 
-func NewCdrOp(line int, position int) *CdrFunc {
-	return &CdrFunc{BaseNode: BaseNode{line, position}}
+func NewCdrOp(line int, position int) *CdrOp {
+	return &CdrOp{BaseNode: BaseNode{line, position}}
 }
 
-func (op *CdrFunc) String() string {
+func (op *CdrOp) String() string {
 	return "Cdr Operator"
 }
 
 // Interface Node
-func (op *CdrFunc) NodeType() string {
+func (op *CdrOp) NodeType() string {
 	return "Cdr Function"
 }
 
-func (op *CdrFunc) Line() int {
+func (op *CdrOp) Line() int {
 	return op.BaseNode.Line
 }
 
-func (op *CdrFunc) Position() int {
+func (op *CdrOp) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *CdrFunc) Run(args []Node, env *Env) (Node, error) {
+func (op *CdrOp) Run(args []Node, env *Env) (Node, error) {
 	// Only one argument for quote
 	if len(args) != 1 {
 		return nil, fmt.Errorf("cdr operator requires only 1 argument")
