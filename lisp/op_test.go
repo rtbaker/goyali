@@ -97,6 +97,7 @@ func TestConsOp(t *testing.T) {
 		{Code: "(cons 'a '(b c))", Expected: "(a b c)"},
 		{Code: "(cons 'a '(b (c d)))", Expected: "(a b (c d))"},
 		{Code: "(cons 'a (cdr '(b c d)))", Expected: "(a c d)"},
+		{Code: "(cons '(a b) '(c d))", Expected: "((a b) c d)"},
 		{Code: "(cons (car '(b c d)) '(a))", Expected: "(b a)"},
 		{Code: "(cons 'a (cons 'b (cons 'c '())))", Expected: "(a b c)"},
 	}
