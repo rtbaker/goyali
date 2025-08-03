@@ -1,7 +1,6 @@
 package lisp
 
 import (
-	"bufio"
 	"fmt"
 	"strings"
 
@@ -17,9 +16,8 @@ type SimpleTest struct {
 
 // Support func's for testing
 func runExpression(expr string) (string, error) {
-	reader := bufio.NewReader(strings.NewReader(expr))
-	lex := lexer.NewLexer(reader)
-	myParser := NewParser(lex)
+	lex := lexer.NewLexer(strings.NewReader(expr))
+	myParser := NewParser(lex, false)
 
 	program, err := myParser.ParseProgram()
 

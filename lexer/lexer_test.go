@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	"bufio"
 	"strings"
 	"testing"
 )
@@ -22,7 +21,7 @@ func TestSingleCharSymbols(t *testing.T) {
 	}
 
 	for _, table := range tables {
-		reader := bufio.NewReader(strings.NewReader(table.symbol))
+		reader := strings.NewReader(table.symbol)
 		lex := NewLexer(reader)
 
 		token, err := lex.GetToken()
@@ -38,7 +37,7 @@ func TestSingleCharSymbols(t *testing.T) {
 }
 
 func TestEmptyString(t *testing.T) {
-	reader := bufio.NewReader(strings.NewReader("      "))
+	reader := strings.NewReader("      ")
 	lex := NewLexer(reader)
 
 	token, err := lex.GetToken()
@@ -113,7 +112,7 @@ func TestEmptyString(t *testing.T) {
 	}
 */
 func TestAtom(t *testing.T) {
-	reader := bufio.NewReader(strings.NewReader("somestring"))
+	reader := strings.NewReader("somestring")
 	lex := NewLexer(reader)
 
 	token, err := lex.GetToken()
@@ -136,7 +135,7 @@ func TestAtom(t *testing.T) {
 }
 
 func TestEOFAfterMultipleTokens(t *testing.T) {
-	reader := bufio.NewReader(strings.NewReader("somestring and another"))
+	reader := strings.NewReader("somestring and another")
 	lex := NewLexer(reader)
 
 	var token *Token
@@ -153,12 +152,12 @@ func TestEOFAfterMultipleTokens(t *testing.T) {
 
 	// Last token should be EOF
 	if token.Code != EOF {
-		t.Errorf("Lexer GetToken dod not return EOF Token: got %d ", token.Code)
+		t.Errorf("Lexer GetToken did not return EOF Token: got %d ", token.Code)
 	}
 }
 
 func TestChar(t *testing.T) {
-	reader := bufio.NewReader(strings.NewReader("@"))
+	reader := strings.NewReader("@")
 	lex := NewLexer(reader)
 
 	_, err := lex.GetToken()

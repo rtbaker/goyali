@@ -10,7 +10,7 @@ type Program struct {
 func NewProgram() *Program {
 	// top level symbol table
 	env := NewEnv(nil)
-	env.initialiseBuiltin()
+	env.InitialiseBuiltin()
 
 	return &Program{
 		env: env,

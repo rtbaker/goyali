@@ -3,12 +3,14 @@ package lexer
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"unicode"
 )
 
 // Lexer Simple lex
 type Lexer struct {
-	in          *bufio.Reader
+	in          io.Reader
+	bufferedIn  *bufio.Reader
 	currentRune rune
 	eof         bool
 	pos         int
@@ -16,16 +18,15 @@ type Lexer struct {
 }
 
 // NewLexer Create a new Lexer
-func NewLexer(input *bufio.Reader) *Lexer {
+func NewLexer(input io.Reader) *Lexer {
 	l := new(Lexer)
 
 	l.in = input
+	l.bufferedIn = bufio.NewReader(l.in)
+
 	l.eof = false
 	l.pos = 0
 	l.line = 1
-
-	// load first one
-	l.currentRune, _, _ = l.ReadRune()
 
 	return l
 }
@@ -33,7 +34,17 @@ func NewLexer(input *bufio.Reader) *Lexer {
 func (lex *Lexer) ReadRune() (rune, int, error) {
 	lex.pos++
 
-	current, size, err := lex.in.ReadRune()
+	var current rune
+	var size int
+	var err error
+
+	available, err := lex.bufferedIn.Peek(1)
+
+	if len(available) == 0 && err.Error() != "EOF" {
+		return 0, 0, nil
+	}
+
+	current, size, err = lex.bufferedIn.ReadRune()
 
 	if current == '\n' {
 		lex.line++
@@ -46,6 +57,18 @@ func (lex *Lexer) ReadRune() (rune, int, error) {
 
 // GetToken Get the next Token from the stream
 func (lex *Lexer) GetToken() (*Token, error) {
+	// Move to the next rune
+	var err error
+	lex.currentRune, _, err = lex.ReadRune()
+
+	if err != nil && err.Error() == "EOF" {
+		lex.eof = true
+	} else if err != nil {
+		// Error reading next rune, return an error instead of the last token
+		return nil, err
+	}
+
+	// default end of file token
 	tok := new(Token)
 	tok.Code = EOF
 	tok.Line = lex.line
@@ -55,7 +78,9 @@ func (lex *Lexer) GetToken() (*Token, error) {
 		return tok, nil
 	}
 
-	var err error
+	if lex.currentRune == 0 {
+		return nil, nil
+	}
 
 	// Eat whitespace at beginning of buffer
 	if unicode.IsSpace(lex.currentRune) {
@@ -127,18 +152,10 @@ func (lex *Lexer) GetToken() (*Token, error) {
 		tok.Code = OPENPARENS
 	case ')':
 		tok.Code = CLOSEPARENS
+	case 0:
+		return nil, nil
 	default:
 		return nil, fmt.Errorf("unrecognised token: %q", lex.currentRune)
-	}
-
-	// Move to the next rune
-	lex.currentRune, _, err = lex.ReadRune()
-
-	if err != nil && err.Error() == "EOF" {
-		lex.eof = true
-	} else if err != nil {
-		// Error reading next rune, return an error instead of the last token
-		return nil, err
 	}
 
 	return tok, nil

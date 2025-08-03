@@ -9,13 +9,15 @@ import (
 // Takes a stream of tokens from the lexer and returns lists and atoms
 
 type Parser struct {
-	lexer     *lexer.Lexer
-	lookahead *lexer.Token
+	lexer           *lexer.Lexer
+	lookahead       *lexer.Token
+	interactiveMode bool
 }
 
-func NewParser(lexer *lexer.Lexer) *Parser {
+func NewParser(lexer *lexer.Lexer, interactiveMode bool) *Parser {
 	parser := &Parser{
-		lexer: lexer,
+		lexer:           lexer,
+		interactiveMode: interactiveMode,
 	}
 
 	return parser
@@ -33,7 +35,7 @@ func (parser *Parser) ParseProgram() (*Program, error) {
 
 	var expr Node
 
-	for expr, err = parser.getExpression(); expr != nil; expr, err = parser.getExpression() {
+	for expr, err = parser.GetExpression(); expr != nil; expr, err = parser.GetExpression() {
 		if err != nil {
 			return nil, err
 		}
@@ -49,7 +51,27 @@ func (parser *Parser) ParseProgram() (*Program, error) {
 	return top, nil
 }
 
-func (parser *Parser) getExpression() (Node, error) {
+func (parser *Parser) GetExpression() (Node, error) {
+	if parser.lookahead == nil {
+		var err error
+		parser.lookahead, err = parser.lexer.GetToken()
+
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if parser.interactiveMode && parser.lookahead == nil {
+		for parser.lookahead == nil {
+			var err error
+			parser.lookahead, err = parser.lexer.GetToken()
+
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
 	if parser.lookahead.Code == lexer.EOF {
 		return nil, nil
 	}
@@ -90,7 +112,7 @@ func (parser *Parser) getExpression() (Node, error) {
 
 		list.AppendNode(quoteAtom)
 
-		expression, err := parser.getExpression()
+		expression, err := parser.GetExpression()
 		if err != nil {
 			return nil, err
 		}
@@ -121,7 +143,7 @@ func (parser *Parser) getList() (Node, error) {
 
 	// Keep adding children/entries until the list is closed
 	for parser.lookahead.Code != lexer.CLOSEPARENS && parser.lookahead.Code != lexer.EOF {
-		exp, err := parser.getExpression()
+		exp, err := parser.GetExpression()
 		if err != nil {
 			return nil, err
 		}
