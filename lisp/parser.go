@@ -71,7 +71,6 @@ func (parser *Parser) GetExpression() (Node, error) {
 		if err != nil {
 			return nil, err
 		}
-
 		return atom, nil
 	}
 

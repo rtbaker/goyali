@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"io"
 	"unicode"
+	"unicode/utf8"
 )
 
 // Lexer Simple lex
 type Lexer struct {
 	in          io.Reader
-	bufferedIn  *bufio.Reader
+	scanner     *bufio.Scanner
 	currentRune rune
 	eof         bool
 	pos         int
@@ -22,7 +23,8 @@ func NewLexer(input io.Reader) *Lexer {
 	l := new(Lexer)
 
 	l.in = input
-	l.bufferedIn = bufio.NewReader(l.in)
+	l.scanner = bufio.NewScanner(l.in)
+	l.scanner.Split(bufio.ScanRunes)
 
 	l.eof = false
 	l.pos = 0
@@ -32,28 +34,32 @@ func NewLexer(input io.Reader) *Lexer {
 	return l
 }
 
-func (lex *Lexer) ReadRune() (rune, int, error) {
+func (lex *Lexer) ReadNextRune() (rune, error) {
 	lex.pos++
 
-	var current rune
-	var size int
-	var err error
+	ok := lex.scanner.Scan()
 
-	//available, err := lex.bufferedIn.Peek(1)
+	if !ok {
+		// either end of file or an error
+		err := lex.scanner.Err()
 
-	//if len(available) == 0 && err.Error() != "EOF" {
-	//	return 0, 0, nil
-	//}
+		if err != nil {
+			return utf8.RuneError, err
+		}
 
-	current, size, err = lex.bufferedIn.ReadRune()
+		return utf8.RuneError, io.EOF
+	}
+
+	b := lex.scanner.Bytes()
+	current, _ := utf8.DecodeRune(b)
 
 	if current == '\n' {
 		lex.line++
 		lex.pos = 1
-		return ' ', 1, nil
+		return ' ', nil
 	}
 
-	return current, size, err
+	return current, nil
 }
 
 // GetToken Get the next Token from the stream
@@ -77,13 +83,13 @@ func (lex *Lexer) GetToken() (*Token, error) {
 			lex.pos = 0
 		}
 
-		for lex.currentRune, _, err = lex.ReadRune(); unicode.IsSpace(lex.currentRune) && err == nil; {
+		for lex.currentRune, err = lex.ReadNextRune(); unicode.IsSpace(lex.currentRune) && err == nil; {
 			if lex.currentRune == '\n' {
 				lex.line++
 				lex.pos = 0
 			}
 
-			lex.currentRune, _, err = lex.ReadRune()
+			lex.currentRune, err = lex.ReadNextRune()
 		}
 	}
 
@@ -106,10 +112,10 @@ func (lex *Lexer) GetToken() (*Token, error) {
 		var str = string(lex.currentRune)
 
 		// Slurp letters and numbers up to something else
-		lex.currentRune, _, err = lex.ReadRune()
+		lex.currentRune, err = lex.ReadNextRune()
 		for unicode.IsLetter(lex.currentRune) && err == nil {
 			str = str + string(lex.currentRune)
-			lex.currentRune, _, err = lex.ReadRune()
+			lex.currentRune, err = lex.ReadNextRune()
 		}
 
 		if err != nil && err.Error() == "EOF" {
@@ -145,7 +151,7 @@ func (lex *Lexer) GetToken() (*Token, error) {
 	}
 
 	// Move to the next rune
-	lex.currentRune, _, err = lex.ReadRune()
+	lex.currentRune, err = lex.ReadNextRune()
 
 	if err != nil && err.Error() == "EOF" {
 		lex.eof = true

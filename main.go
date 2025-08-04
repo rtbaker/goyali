@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/rtbaker/goyali/lexer"
 	"github.com/rtbaker/goyali/lisp"
@@ -15,22 +17,30 @@ type LispTest struct {
 }
 
 func main() {
-	lex := lexer.NewLexer(os.Stdin)
-
-	myParser := lisp.NewParser(lex)
-
 	// Setup top level env/symbol table
 	env := lisp.NewEnv(nil)
 	env.InitialiseBuiltin()
 
 	fmt.Printf("> ")
 
+	reader := bufio.NewReader(os.Stdin)
+
 	var node lisp.Node
 	var err error
 
-	node, err = myParser.GetExpression()
+	//node, err = myParser.GetExpression()
+
+	var builder strings.Builder
 
 	for {
+		text, _ := reader.ReadString('\n')
+		builder.WriteString(text)
+
+		lex := lexer.NewLexer(strings.NewReader(builder.String()))
+
+		myParser := lisp.NewParser(lex)
+		node, err = myParser.GetExpression()
+
 		if err != nil {
 			fmt.Printf("error: %s\n", err)
 		}
@@ -48,7 +58,8 @@ func main() {
 		}
 
 		fmt.Printf("%s\n> ", resultNode)
-		node, err = myParser.GetExpression()
+
+		builder.Reset()
 	}
 
 	fmt.Println()
