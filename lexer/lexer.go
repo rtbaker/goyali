@@ -27,6 +27,7 @@ func NewLexer(input io.Reader) *Lexer {
 	l.eof = false
 	l.pos = 0
 	l.line = 1
+	l.currentRune = ' '
 
 	return l
 }
@@ -38,11 +39,11 @@ func (lex *Lexer) ReadRune() (rune, int, error) {
 	var size int
 	var err error
 
-	available, err := lex.bufferedIn.Peek(1)
+	//available, err := lex.bufferedIn.Peek(1)
 
-	if len(available) == 0 && err.Error() != "EOF" {
-		return 0, 0, nil
-	}
+	//if len(available) == 0 && err.Error() != "EOF" {
+	//	return 0, 0, nil
+	//}
 
 	current, size, err = lex.bufferedIn.ReadRune()
 
@@ -57,17 +58,6 @@ func (lex *Lexer) ReadRune() (rune, int, error) {
 
 // GetToken Get the next Token from the stream
 func (lex *Lexer) GetToken() (*Token, error) {
-	// Move to the next rune
-	var err error
-	lex.currentRune, _, err = lex.ReadRune()
-
-	if err != nil && err.Error() == "EOF" {
-		lex.eof = true
-	} else if err != nil {
-		// Error reading next rune, return an error instead of the last token
-		return nil, err
-	}
-
 	// default end of file token
 	tok := new(Token)
 	tok.Code = EOF
@@ -78,9 +68,7 @@ func (lex *Lexer) GetToken() (*Token, error) {
 		return tok, nil
 	}
 
-	if lex.currentRune == 0 {
-		return nil, nil
-	}
+	var err error
 
 	// Eat whitespace at beginning of buffer
 	if unicode.IsSpace(lex.currentRune) {
@@ -152,10 +140,18 @@ func (lex *Lexer) GetToken() (*Token, error) {
 		tok.Code = OPENPARENS
 	case ')':
 		tok.Code = CLOSEPARENS
-	case 0:
-		return nil, nil
 	default:
 		return nil, fmt.Errorf("unrecognised token: %q", lex.currentRune)
+	}
+
+	// Move to the next rune
+	lex.currentRune, _, err = lex.ReadRune()
+
+	if err != nil && err.Error() == "EOF" {
+		lex.eof = true
+	} else if err != nil {
+		// Error reading next rune, return an error instead of the last token
+		return nil, err
 	}
 
 	return tok, nil

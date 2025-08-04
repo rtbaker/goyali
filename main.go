@@ -17,7 +17,7 @@ type LispTest struct {
 func main() {
 	lex := lexer.NewLexer(os.Stdin)
 
-	myParser := lisp.NewParser(lex, true)
+	myParser := lisp.NewParser(lex)
 
 	// Setup top level env/symbol table
 	env := lisp.NewEnv(nil)

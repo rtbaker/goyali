@@ -9,15 +9,13 @@ import (
 // Takes a stream of tokens from the lexer and returns lists and atoms
 
 type Parser struct {
-	lexer           *lexer.Lexer
-	lookahead       *lexer.Token
-	interactiveMode bool
+	lexer     *lexer.Lexer
+	lookahead *lexer.Token
 }
 
-func NewParser(lexer *lexer.Lexer, interactiveMode bool) *Parser {
+func NewParser(lexer *lexer.Lexer) *Parser {
 	parser := &Parser{
-		lexer:           lexer,
-		interactiveMode: interactiveMode,
+		lexer: lexer,
 	}
 
 	return parser
@@ -58,17 +56,6 @@ func (parser *Parser) GetExpression() (Node, error) {
 
 		if err != nil {
 			return nil, err
-		}
-	}
-
-	if parser.interactiveMode && parser.lookahead == nil {
-		for parser.lookahead == nil {
-			var err error
-			parser.lookahead, err = parser.lexer.GetToken()
-
-			if err != nil {
-				return nil, err
-			}
 		}
 	}
 

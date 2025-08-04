@@ -17,7 +17,7 @@ type SimpleTest struct {
 // Support func's for testing
 func runExpression(expr string) (string, error) {
 	lex := lexer.NewLexer(strings.NewReader(expr))
-	myParser := NewParser(lex, false)
+	myParser := NewParser(lex)
 
 	program, err := myParser.ParseProgram()
 
