@@ -6,6 +6,8 @@ import (
 	"github.com/rtbaker/goyali/lexer"
 )
 
+// Takes a stream of tokens from the lexer and returns lists and atoms
+
 type Parser struct {
 	lexer     *lexer.Lexer
 	lookahead *lexer.Token
@@ -19,8 +21,8 @@ func NewParser(lexer *lexer.Lexer) *Parser {
 	return parser
 }
 
-func (parser *Parser) Parse() (Node, error) {
-	top := &Program{}
+func (parser *Parser) ParseProgram() (*Program, error) {
+	top := NewProgram()
 
 	var err error
 	parser.lookahead, err = parser.lexer.GetToken()
@@ -29,18 +31,34 @@ func (parser *Parser) Parse() (Node, error) {
 		return nil, err
 	}
 
-	for expr, err := parser.getExpression(); expr != nil; expr, err = parser.getExpression() {
+	var expr Node
+
+	for expr, err = parser.GetExpression(); expr != nil; expr, err = parser.GetExpression() {
 		if err != nil {
 			return nil, err
 		}
 
-		top.expressions = append(top.expressions, expr)
+		top.AppendNode(expr)
+	}
+
+	// catch error in last iteration of loop
+	if err != nil {
+		return nil, err
 	}
 
 	return top, nil
 }
 
-func (parser *Parser) getExpression() (Node, error) {
+func (parser *Parser) GetExpression() (Node, error) {
+	if parser.lookahead == nil {
+		var err error
+		parser.lookahead, err = parser.lexer.GetToken()
+
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	if parser.lookahead.Code == lexer.EOF {
 		return nil, nil
 	}
@@ -53,7 +71,6 @@ func (parser *Parser) getExpression() (Node, error) {
 		if err != nil {
 			return nil, err
 		}
-
 		return atom, nil
 	}
 
@@ -68,21 +85,27 @@ func (parser *Parser) getExpression() (Node, error) {
 	}
 
 	if parser.lookahead.Code == lexer.SHORTQUOTE {
-		quote := NewQuoteOp(parser.lookahead.Line, parser.lookahead.Position)
+		line := parser.lookahead.Line
+		pos := parser.lookahead.Position
 
 		err := parser.match(lexer.SHORTQUOTE)
 		if err != nil {
 			return nil, err
 		}
 
-		expression, err := parser.getExpression()
+		list := NewList(line, pos)
+		quoteAtom := NewAtom("quote", line, pos+1) // Line&position bug here, subsequent positions on this line are now wrong
+
+		list.AppendNode(quoteAtom)
+
+		expression, err := parser.GetExpression()
 		if err != nil {
 			return nil, err
 		}
 
-		quote.AppendNode(expression)
+		list.AppendNode(expression)
 
-		return quote, nil
+		return list, nil
 	}
 
 	// Shouldn't get here
@@ -91,8 +114,7 @@ func (parser *Parser) getExpression() (Node, error) {
 		parser.lookahead.Line, parser.lookahead.Position)
 }
 
-// A list contains atoms or other lists
-// Some of the lists are special (i.e. start with language keyword)
+// A list contains atoms or other lists.Nod
 func (parser *Parser) getList() (Node, error) {
 	// Start
 	line := parser.lookahead.Line
@@ -103,19 +125,11 @@ func (parser *Parser) getList() (Node, error) {
 		return nil, fmt.Errorf("list start error: %s", err)
 	}
 
-	list, err := parser.getOperator(line, pos)
-	if err != nil {
-		return nil, fmt.Errorf("operator match error: %s", err)
-	}
-
-	// Just an ordinary list?
-	if list == nil {
-		list = NewList(line, pos)
-	}
+	list := NewList(line, pos)
 
 	// Keep adding children/entries until the list is closed
-	for parser.lookahead.Code != lexer.CLOSEPARENS {
-		exp, err := parser.getExpression()
+	for parser.lookahead.Code != lexer.CLOSEPARENS && parser.lookahead.Code != lexer.EOF {
+		exp, err := parser.GetExpression()
 		if err != nil {
 			return nil, err
 		}
@@ -131,50 +145,6 @@ func (parser *Parser) getList() (Node, error) {
 	return list, nil
 }
 
-// If the list starts with a known operator return it's
-// type or nil. Assume the initial parens has been consumed
-// so we are looking for a know op type
-func (parser *Parser) getOperator(line int, position int) (ListNode, error) {
-	var node ListNode = nil
-	var err error
-
-	switch parser.lookahead.Code {
-	case lexer.QUOTE:
-		node = NewQuoteOp(line, position)
-		err = parser.match(lexer.QUOTE)
-	case lexer.ATOMOPERATOR:
-		node = NewAtomOp(line, position)
-		err = parser.match(lexer.ATOMOPERATOR)
-	case lexer.EQUALS:
-		node = NewEqualsOp(line, position)
-		err = parser.match(lexer.EQUALS)
-	case lexer.CAR:
-		node = NewCarOp(line, position)
-		err = parser.match(lexer.CAR)
-	case lexer.CDR:
-		node = NewCdrOp(line, position)
-		err = parser.match(lexer.CDR)
-	case lexer.CONS:
-		node = NewConsOp(line, position)
-		err = parser.match(lexer.CONS)
-	case lexer.COND:
-		node = NewCondOp(line, position)
-		err = parser.match(lexer.COND)
-	case lexer.LAMBDA:
-		node = NewLambdaOp(line, position)
-		err = parser.match(lexer.LAMBDA)
-	case lexer.LABEL:
-		node = NewLabelOp(line, position)
-		err = parser.match(lexer.LABEL)
-	case lexer.DEFUN:
-		node = NewDefunOp(line, position)
-		err = parser.match(lexer.DEFUN)
-	}
-
-	// didn't match a know operator
-	return node, err
-}
-
 // Checks that we have what we are expecting and moves us to the next
 // token if so.
 func (parser *Parser) match(nodeType lexer.TokenCode) error {
@@ -184,6 +154,6 @@ func (parser *Parser) match(nodeType lexer.TokenCode) error {
 		return err
 	}
 
-	return fmt.Errorf("expected token code: %d, got %d at line %d, position %d",
-		nodeType, parser.lookahead.Code, parser.lookahead.Line, parser.lookahead.Position)
+	return fmt.Errorf("expected token code: %s, got %s at line %d, position %d",
+		lexer.TokenCodeString(nodeType), lexer.TokenCodeString(parser.lookahead.Code), parser.lookahead.Line, parser.lookahead.Position)
 }

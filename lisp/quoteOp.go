@@ -6,7 +6,6 @@ import "fmt"
 
 type QuoteOp struct {
 	BaseNode
-	entries []Node
 }
 
 func NewQuoteOp(line int, position int) *QuoteOp {
@@ -17,13 +16,9 @@ func (op *QuoteOp) String() string {
 	return "Quote Operator"
 }
 
-func (op *QuoteOp) AppendNode(n Node) {
-	op.entries = append(op.entries, n)
-}
-
 // Interface Node
-func (op *QuoteOp) QuotedValue() Node {
-	return NewAtom("quote", op.Position(), op.Line())
+func (op *QuoteOp) NodeType() string {
+	return "Quote Function"
 }
 
 func (op *QuoteOp) Line() int {
@@ -34,18 +29,17 @@ func (op *QuoteOp) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *QuoteOp) Children() []Node {
-	return op.entries
-}
-
-func (op *QuoteOp) SyntaxCheck() error {
+func (op *QuoteOp) Run(args []Node, env *Env) (Node, error) {
 	// Only one argument for quote
-	if len(op.entries) != 1 {
-		return fmt.Errorf("quote operator requires only 1 argument, line %d, position %d", op.Line(), op.Position())
+	if len(args) != 1 {
+		return nil, fmt.Errorf("quote operator requires only 1 argument")
 	}
-	return nil
-}
 
-func (op *QuoteOp) Evaluate() (Node, error) {
-	return nil, nil
+	retNode, err := EvaluateNode(args[0], env, true)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return retNode, nil
 }

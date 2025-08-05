@@ -3,7 +3,18 @@ package lisp
 // Top level, a list of expressions
 
 type Program struct {
-	expressions []Node
+	env         *Env
+	Expressions []Node
+}
+
+func NewProgram() *Program {
+	// top level symbol table
+	env := NewEnv(nil)
+	env.InitialiseBuiltin()
+
+	return &Program{
+		env: env,
+	}
 }
 
 func (prog *Program) String() string {
@@ -11,10 +22,6 @@ func (prog *Program) String() string {
 }
 
 // Interface Node
-func (prog *Program) QuotedValue() Node {
-	return NewAtom("", 0, 0)
-}
-
 func (prog *Program) Line() int {
 	return 0
 }
@@ -24,13 +31,9 @@ func (prog *Program) Position() int {
 }
 
 func (prog *Program) Children() []Node {
-	return prog.expressions
+	return prog.Expressions
 }
 
-func (prog *Program) SyntaxCheck() error {
-	return nil
-}
-
-func (prog *Program) Evaluate() (Node, error) {
-	return nil, nil
+func (prog *Program) AppendNode(n Node) {
+	prog.Expressions = append(prog.Expressions, n)
 }

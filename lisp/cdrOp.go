@@ -6,7 +6,6 @@ import "fmt"
 
 type CdrOp struct {
 	BaseNode
-	entries []Node
 }
 
 func NewCdrOp(line int, position int) *CdrOp {
@@ -17,13 +16,9 @@ func (op *CdrOp) String() string {
 	return "Cdr Operator"
 }
 
-func (op *CdrOp) AppendNode(n Node) {
-	op.entries = append(op.entries, n)
-}
-
 // Interface Node
-func (op *CdrOp) QuotedValue() Node {
-	return NewAtom("cdr", op.Line(), op.Position())
+func (op *CdrOp) NodeType() string {
+	return "Cdr Function"
 }
 
 func (op *CdrOp) Line() int {
@@ -34,18 +29,32 @@ func (op *CdrOp) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *CdrOp) Children() []Node {
-	return op.entries
-}
-
-func (op *CdrOp) SyntaxCheck() error {
-	// Only one argument for cdr
-	if len(op.entries) != 1 {
-		return fmt.Errorf("cdr operator requires only 1 argument, line %d, position %d", op.Line(), op.Position())
+func (op *CdrOp) Run(args []Node, env *Env) (Node, error) {
+	// Only one argument for quote
+	if len(args) != 1 {
+		return nil, fmt.Errorf("cdr operator requires only 1 argument")
 	}
-	return nil
-}
 
-func (op *CdrOp) Evaluate() (Node, error) {
-	return nil, nil
+	retNode, err := EvaluateNode(args[0], env, false)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if listNode, ok := retNode.(*List); ok {
+		// Empty list, returns as nil
+		if len(listNode.Children()) <= 1 {
+			return NewList(0, 0), nil
+		}
+
+		retList := NewList(0, 0)
+
+		for _, node := range listNode.Children()[1:] {
+			retList.AppendNode(node)
+		}
+
+		return retList, nil
+	}
+
+	return nil, fmt.Errorf("cdr operator requires a list as its argument")
 }

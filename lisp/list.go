@@ -1,5 +1,10 @@
 package lisp
 
+import (
+	"fmt"
+	"strings"
+)
+
 // A List
 
 type List struct {
@@ -13,10 +18,21 @@ func NewList(line int, position int) *List {
 
 func (list *List) String() string {
 	if len(list.entries) > 0 {
-		return "List"
+		var b strings.Builder
+		b.WriteString("(")
+
+		for i, child := range list.entries {
+			if i > 0 {
+				b.WriteString(" ")
+			}
+			b.WriteString(fmt.Sprintf("%s", child))
+		}
+
+		b.WriteString(")")
+		return b.String()
 	}
 
-	return "Empty List"
+	return "()"
 }
 
 func (list *List) isEmptyList() bool {
@@ -27,16 +43,13 @@ func (list *List) AppendNode(n Node) {
 	list.entries = append(list.entries, n)
 }
 
+func (list *List) AppendNodes(nodes []Node) {
+	list.entries = append(list.entries, nodes...)
+}
+
 // Interface Node
-func (list *List) QuotedValue() Node {
-	qlist := NewList(list.Line(), list.Position())
-
-	// recurse into lists!
-	for _, n := range list.entries {
-		qlist.AppendNode(n.QuotedValue())
-	}
-
-	return qlist
+func (list *List) NodeType() string {
+	return "List"
 }
 
 func (list *List) Line() int {
@@ -51,10 +64,29 @@ func (list *List) Children() []Node {
 	return list.entries
 }
 
-func (list *List) SyntaxCheck() error {
-	return nil
-}
+func (list *List) Evaluate(env *Env, inQuote bool) (Node, error) {
+	// empty/quoted list evaluates as itself
+	if len(list.entries) == 0 || inQuote {
+		return list, nil
+	}
 
-func (list *List) Evaluate() (Node, error) {
-	return nil, nil
+	// Otherwise the first child must be a function
+	firstNode := list.entries[0]
+	eFirstNode, err := EvaluateNode(firstNode, env, inQuote)
+
+	if err != nil {
+		return nil, fmt.Errorf("%s\nevaluating first list item (line %d, position %d)", err, firstNode.Line(), firstNode.Position())
+	}
+
+	if lFunc, ok := eFirstNode.(LispFunction); ok {
+		retNode, err := lFunc.Run(list.entries[1:], env)
+
+		if err != nil {
+			return nil, fmt.Errorf("%s\n%s (line %d, position %d)", err, eFirstNode.NodeType(), firstNode.Line(), firstNode.Position())
+		}
+
+		return retNode, nil
+	} else {
+		return nil, fmt.Errorf("undefined function %s, line %d, position %d", firstNode, firstNode.Line(), firstNode.Position())
+	}
 }

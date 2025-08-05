@@ -6,7 +6,6 @@ import "fmt"
 
 type CondOp struct {
 	BaseNode
-	entries []Node
 }
 
 func NewCondOp(line int, position int) *CondOp {
@@ -17,13 +16,9 @@ func (op *CondOp) String() string {
 	return "Cond Operator"
 }
 
-func (op *CondOp) AppendNode(n Node) {
-	op.entries = append(op.entries, n)
-}
-
 // Interface Node
-func (op *CondOp) QuotedValue() Node {
-	return NewAtom("cond", op.Line(), op.Position())
+func (op *CondOp) NodeType() string {
+	return "Cond Function"
 }
 
 func (op *CondOp) Line() int {
@@ -34,25 +29,38 @@ func (op *CondOp) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *CondOp) Children() []Node {
-	return op.entries
-}
+func (op *CondOp) Run(args []Node, env *Env) (Node, error) {
+	for _, arg := range args {
+		// each argument is a list of 2 things, a test and an expression
+		var listArg *List
+		var ok bool
 
-func (op *CondOp) SyntaxCheck() error {
-	// Must have at least 1 entry?
-	if len(op.entries) == 0 {
-		return fmt.Errorf("cond operator requires at least 1 argument, line %d position %d", op.Line(), op.Position())
-	}
-
-	// each entry is (<test expression> <return expression>)
-	for _, n := range op.Children() {
-		if len(n.Children()) != 2 {
-			return fmt.Errorf("cond entry requires 2 expressions, line %d position %d", n.Line(), n.Position())
+		if listArg, ok = arg.(*List); !ok {
+			return nil, fmt.Errorf("argument to cond must be a list, line %d, position %d", arg.Line(), arg.Position())
 		}
-	}
-	return nil
-}
 
-func (op *CondOp) Evaluate() (Node, error) {
-	return nil, nil
+		if len(listArg.Children()) != 2 {
+			return nil, fmt.Errorf("cond argument must be a list of 2 items, test and expression, line %d, position %d", arg.Line(), arg.Position())
+		}
+
+		retNode1, err := EvaluateNode(listArg.Children()[0], env, false)
+		if err != nil {
+			return nil, err
+		}
+
+		if !IsTrue(retNode1) {
+			continue
+		}
+
+		retNode2, err := EvaluateNode(listArg.Children()[1], env, false)
+
+		if err != nil {
+			return nil, err
+		}
+
+		return retNode2, nil
+	}
+
+	// no match, return a "NIL" atom
+	return NilAtom(), nil
 }

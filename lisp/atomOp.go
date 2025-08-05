@@ -6,7 +6,6 @@ import "fmt"
 
 type AtomOp struct {
 	BaseNode
-	entries []Node
 }
 
 func NewAtomOp(line int, position int) *AtomOp {
@@ -17,13 +16,9 @@ func (op *AtomOp) String() string {
 	return "Atom Operator"
 }
 
-func (op *AtomOp) AppendNode(n Node) {
-	op.entries = append(op.entries, n)
-}
-
 // Interface Node
-func (op *AtomOp) QuotedValue() Node {
-	return NewAtom("atom", op.Line(), op.Position())
+func (op *AtomOp) NodeType() string {
+	return "Atom Function"
 }
 
 func (op *AtomOp) Line() int {
@@ -34,18 +29,27 @@ func (op *AtomOp) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *AtomOp) Children() []Node {
-	return op.entries
-}
-
-func (op *AtomOp) SyntaxCheck() error {
+func (op *AtomOp) Run(args []Node, env *Env) (Node, error) {
 	// Only one argument for quote
-	if len(op.entries) != 1 {
-		return fmt.Errorf("atom operator requires only 1 argument, line %d, position %d", op.Line(), op.Position())
+	if len(args) != 1 {
+		return nil, fmt.Errorf("atom operator requires only 1 argument")
 	}
-	return nil
-}
 
-func (op *AtomOp) Evaluate() (Node, error) {
-	return nil, nil
+	retNode, err := EvaluateNode(args[0], env, false)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if NodeIsAtom(retNode) {
+		return Truth(), nil
+	}
+
+	if listVal, ok := retNode.(*List); ok {
+		if listVal.isEmptyList() {
+			return Truth(), nil
+		}
+	}
+
+	return Falsity(), nil
 }

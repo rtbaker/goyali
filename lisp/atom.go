@@ -16,12 +16,12 @@ func NewAtom(name string, line int, position int) *Atom {
 }
 
 func (atom *Atom) String() string {
-	return fmt.Sprintf("Atom: %s", atom.Name)
+	return atom.Name
 }
 
 // Interface Node
-func (atom *Atom) QuotedValue() Node {
-	return atom
+func (atom *Atom) NodeType() string {
+	return "Atom"
 }
 
 func (atom *Atom) Line() int {
@@ -32,19 +32,16 @@ func (atom *Atom) Position() int {
 	return atom.BaseNode.Position
 }
 
-func (atom *Atom) Children() []Node {
-	return nil // No children
-}
-
-func (atom *Atom) SyntaxCheck() error {
-	if len(atom.Name) == 0 {
-		// Not sure how this would happen but it's not right
-		return fmt.Errorf("zero length atom value, line %d position %d", atom.Line(), atom.Position())
+func (atom *Atom) Evaluate(env *Env, inQuote bool) (Node, error) {
+	if inQuote {
+		return atom, nil
 	}
 
-	return nil
-}
+	retNode := env.getSymbol(atom.Name)
 
-func (atom *Atom) Evaluate() (Node, error) {
-	return nil, nil
+	if retNode == nil {
+		return nil, fmt.Errorf("Atom \"%s\" has no value (line %d, position %d)", atom.Name, atom.Line(), atom.Position())
+	}
+
+	return retNode, nil
 }

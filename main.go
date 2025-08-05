@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/rtbaker/goyali/lexer"
@@ -10,93 +11,56 @@ import (
 )
 
 type LispTest struct {
-	Name string
-	Code string
+	Name     string
+	Code     string
+	Filename string
 }
 
 func main() {
-	tests := []LispTest{
-		{Name: "Simple Atom", Code: "foo"},
-		{Name: "Empty List", Code: "()"},
-		{Name: "Atom List", Code: "(foo bar hello)"},
-		{Name: "2 Atom Lists", Code: "(foo bar hello) (foo bar hello)"},
-		{Name: "Nested list", Code: "(a b (c d) e)"},
-		{Name: "Quote op atom", Code: "(quote a)"},
-		{Name: "Quote op list", Code: "(quote (a b c))"},
-		{Name: "Short Quote op atom", Code: "'a"},
-		{Name: "Short Quote op list", Code: "'(a b c)"},
-		{Name: "Short Quote op nested list", Code: "'(a b (c))"},
-		{Name: "Atom op atom", Code: "(atom a)"},
-		{Name: "Atom op list", Code: "(atom (a b c))"},
-		{Name: "Equals op atom", Code: "(eq a b)"},
-		{Name: "Equals op empty lists", Code: "(eq () ())"},
-		{Name: "Equals op empty list and atom", Code: "(eq a (b c))"},
-		{Name: "Car OP", Code: "(car (a b c))"},
-		{Name: "Cdr OP", Code: "(cdr (a b c))"},
-		{Name: "Cons OP", Code: "(cons a (b c d))"},
-		{Name: "Cond OP", Code: "(cond ((eq a b) first) ((atom a) second))"},
-		{Name: "Cond OP 2", Code: "(cond (y 't) ('t '()))"},
-		{Name: "Lambda", Code: "(lambda (x) (cons x (b)))"},
-		{Name: "Lambda with args", Code: "((lambda (x) (cons x (b))) a)"},
-		{Name: "Defun op", Code: "(defun subst (a b c) (cons x (b)))"},
-		{Name: "Label", Code: "(label f (lambda (x y z) (cons x(b))))"},
-		{Name: "Bad quote op (2 args)", Code: "(quote a b)"},
-		{Name: "Bad atom op (2 args)", Code: "(atom a b)"},
-		{Name: "Bad equals op (1 args)", Code: "(eq a)"},
-		{Name: "Bad equals op (3 args)", Code: "(eq a b c)"},
-		{Name: "Bad car op (2 args)", Code: "(car a b)"},
-		{Name: "Bad cdr op (2 args)", Code: "(cdr a b)"},
-		{Name: "Bad cons op (1 args)", Code: "(cons a)"},
-		{Name: "Bad Cond OP", Code: "(cond ((eq a b) ) ((atom a) second))"},
-		{Name: "Bad Label (1 arg)", Code: "(label (lambda (x y z) (cons x(b))))"},
-		{Name: "Bad Label (non atom first arg)", Code: "(label (f) (lambda (x y z) (cons x(b))))"},
-		{Name: "Bad lambda (1 arg)", Code: "(lambda (cons x (b)))"},
-		{Name: "Bad lambda (non atom arg)", Code: "(lambda (a (a)) (cons x (b)))"},
-		{Name: "Bad defun (name not atom)", Code: "(defun (a b) (a b) 'a)"},
-		{Name: "Bad defun (non atom arg)", Code: "(defun name (a (b)) 'a)"},
-	}
+	// Setup top level env/symbol table
+	env := lisp.NewEnv(nil)
+	env.InitialiseBuiltin()
 
-	for _, test := range tests {
-		//reader := bufio.NewReader(os.Stdin)
-		reader := bufio.NewReader(strings.NewReader(test.Code))
-		lex := lexer.NewLexer(reader)
+	fmt.Printf("> ")
+
+	reader := bufio.NewReader(os.Stdin)
+
+	var node lisp.Node
+	var err error
+
+	//node, err = myParser.GetExpression()
+
+	var builder strings.Builder
+
+	for {
+		text, _ := reader.ReadString('\n')
+		builder.WriteString(text)
+
+		lex := lexer.NewLexer(strings.NewReader(builder.String()))
 
 		myParser := lisp.NewParser(lex)
-		node, err := myParser.Parse()
+		node, err = myParser.GetExpression()
 
 		if err != nil {
-			fmt.Printf("%s case error: %s", test.Name, err)
-			return
+			fmt.Printf("error: %s\n", err)
 		}
 
-		fmt.Printf("Test: %s\n", test.Name)
+		// EOF
+		if node == nil {
+			break
+		}
 
-		err = lisp.SyntaxCheckTree(node)
+		var resultNode lisp.Node
+		resultNode, err = lisp.EvaluateNode(node, env, false)
+
 		if err != nil {
-			fmt.Printf("Syntax Check error: %s\n\n", err)
-			continue
+			fmt.Printf("error: %s\n", err)
 		}
 
-		indent := 1
-		lisp.WalkTree(
-			node,
-			func(n lisp.Node) error {
-				printSpaces(indent)
-				fmt.Printf("%s\n", n)
-				return nil
-			},
-			func() error { indent++; return nil },
-			func() error { indent--; return nil },
-		)
+		fmt.Printf("%s\n> ", resultNode)
 
-		fmt.Println()
-	}
-}
-
-func printSpaces(indent int) {
-	for i := 0; i < indent; i++ {
-		fmt.Printf(" ")
+		builder.Reset()
 	}
 
-	fmt.Printf("- ")
+	fmt.Println()
 }

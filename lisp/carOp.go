@@ -6,7 +6,6 @@ import "fmt"
 
 type CarOp struct {
 	BaseNode
-	entries []Node
 }
 
 func NewCarOp(line int, position int) *CarOp {
@@ -17,13 +16,9 @@ func (op *CarOp) String() string {
 	return "Car Operator"
 }
 
-func (op *CarOp) AppendNode(n Node) {
-	op.entries = append(op.entries, n)
-}
-
 // Interface Node
-func (op *CarOp) QuotedValue() Node {
-	return NewAtom("car", op.Line(), op.Position())
+func (op *CarOp) NodeType() string {
+	return "Car Function"
 }
 
 func (op *CarOp) Line() int {
@@ -34,18 +29,26 @@ func (op *CarOp) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *CarOp) Children() []Node {
-	return op.entries
-}
-
-func (op *CarOp) SyntaxCheck() error {
-	// Only one argument for car
-	if len(op.entries) != 1 {
-		return fmt.Errorf("car operator requires only 1 argument, line %d, position %d", op.Line(), op.Position())
+func (op *CarOp) Run(args []Node, env *Env) (Node, error) {
+	// Only one argument for quote
+	if len(args) != 1 {
+		return nil, fmt.Errorf("car operator requires only 1 argument")
 	}
-	return nil
-}
 
-func (op *CarOp) Evaluate() (Node, error) {
-	return nil, nil
+	retNode, err := EvaluateNode(args[0], env, false)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if listNode, ok := retNode.(*List); ok {
+		// Empty list, returns as an empty list
+		if len(listNode.Children()) == 0 {
+			return NewList(0, 0), nil
+		}
+
+		return listNode.Children()[0], nil
+	}
+
+	return nil, fmt.Errorf("car operator requires a list as its argument")
 }

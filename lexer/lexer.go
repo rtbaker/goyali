@@ -3,12 +3,15 @@ package lexer
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"unicode"
+	"unicode/utf8"
 )
 
 // Lexer Simple lex
 type Lexer struct {
-	in          *bufio.Reader
+	in          io.Reader
+	scanner     *bufio.Scanner
 	currentRune rune
 	eof         bool
 	pos         int
@@ -16,36 +19,56 @@ type Lexer struct {
 }
 
 // NewLexer Create a new Lexer
-func NewLexer(input *bufio.Reader) *Lexer {
+func NewLexer(input io.Reader) *Lexer {
 	l := new(Lexer)
 
 	l.in = input
-	l.currentRune = ' '
+	l.scanner = bufio.NewScanner(l.in)
+	l.scanner.Split(bufio.ScanRunes)
+
 	l.eof = false
-	l.pos = 1
+	l.pos = 0
 	l.line = 1
+	l.currentRune = ' '
 
 	return l
 }
 
-func (lex *Lexer) ReadRune() (rune, int, error) {
+func (lex *Lexer) ReadNextRune() (rune, error) {
 	lex.pos++
 
-	current, size, err := lex.in.ReadRune()
+	ok := lex.scanner.Scan()
+
+	if !ok {
+		// either end of file or an error
+		err := lex.scanner.Err()
+
+		if err != nil {
+			return utf8.RuneError, err
+		}
+
+		return utf8.RuneError, io.EOF
+	}
+
+	b := lex.scanner.Bytes()
+	current, _ := utf8.DecodeRune(b)
 
 	if current == '\n' {
 		lex.line++
 		lex.pos = 1
-		return ' ', 1, nil
+		return ' ', nil
 	}
 
-	return current, size, err
+	return current, nil
 }
 
 // GetToken Get the next Token from the stream
 func (lex *Lexer) GetToken() (*Token, error) {
+	// default end of file token
 	tok := new(Token)
 	tok.Code = EOF
+	tok.Line = lex.line
+	tok.Position = lex.pos
 
 	if lex.eof {
 		return tok, nil
@@ -57,16 +80,16 @@ func (lex *Lexer) GetToken() (*Token, error) {
 	if unicode.IsSpace(lex.currentRune) {
 		if lex.currentRune == '\n' {
 			lex.line++
-			lex.pos = 1
+			lex.pos = 0
 		}
 
-		for lex.currentRune, _, err = lex.ReadRune(); unicode.IsSpace(lex.currentRune) && err == nil; {
+		for lex.currentRune, err = lex.ReadNextRune(); unicode.IsSpace(lex.currentRune) && err == nil; {
 			if lex.currentRune == '\n' {
 				lex.line++
-				lex.pos = 1
+				lex.pos = 0
 			}
 
-			lex.currentRune, _, err = lex.ReadRune()
+			lex.currentRune, err = lex.ReadNextRune()
 		}
 	}
 
@@ -89,10 +112,10 @@ func (lex *Lexer) GetToken() (*Token, error) {
 		var str = string(lex.currentRune)
 
 		// Slurp letters and numbers up to something else
-		lex.currentRune, _, err = lex.ReadRune()
+		lex.currentRune, err = lex.ReadNextRune()
 		for unicode.IsLetter(lex.currentRune) && err == nil {
 			str = str + string(lex.currentRune)
-			lex.currentRune, _, err = lex.ReadRune()
+			lex.currentRune, err = lex.ReadNextRune()
 		}
 
 		if err != nil && err.Error() == "EOF" {
@@ -111,83 +134,24 @@ func (lex *Lexer) GetToken() (*Token, error) {
 		return tok, nil
 	}
 
-	// number
-	/*
-		if unicode.IsNumber(lex.currentRune) {
-			var isFloat = false
-			tok.Line = lex.line
-			tok.Position = lex.pos
-
-			var str = string(lex.currentRune)
-
-			lex.currentRune, _, err = lex.ReadRune()
-
-			for (unicode.IsNumber(lex.currentRune) || lex.currentRune == '.') && err == nil {
-				if lex.currentRune == '.' {
-					if isFloat {
-						// Hmm we've seen a . already error !
-						return nil, errors.New("double '.' in number")
-					}
-
-					isFloat = true
-				}
-
-				str = str + string(lex.currentRune)
-				lex.currentRune, _, err = lex.ReadRune()
-
-			}
-
-			if err != nil && err.Error() == "EOF" {
-				lex.eof = true
-			} else if err != nil {
-				// eek non eof error
-				return nil, err
-			}
-
-			if isFloat {
-				tok.Code = FLOAT
-				tok.FloatValue, _ = strconv.ParseFloat(str, 64)
-			} else {
-				tok.Code = INT
-				tok.IntValue, _ = strconv.ParseInt(str, 10, 64)
-			}
-
-			return tok, nil
-		}
-	*/
-
 	// Single char tokens, set the value if the token we created at the top
 	tok.Line = lex.line
 	tok.Position = lex.pos
 
 	// plus
 	switch lex.currentRune {
-	//	case '+':
-	//		tok.Code = PLUS
-	//	case '-':
-	//		tok.Code = MINUS
-	//	case '*':
-	//		tok.Code = MULTIPLY
-	//	case '/':
-	//		tok.Code = DIVIDE
-	//	case '{':
-	//		tok.Code = OPENBRACE
-	//	case '}':
-	//		tok.Code = CLOSEBRACE
 	case '\'':
 		tok.Code = SHORTQUOTE
 	case '(':
 		tok.Code = OPENPARENS
 	case ')':
 		tok.Code = CLOSEPARENS
-		//	case ',':
-		//		tok.Code = COMMA
 	default:
 		return nil, fmt.Errorf("unrecognised token: %q", lex.currentRune)
 	}
 
 	// Move to the next rune
-	lex.currentRune, _, err = lex.ReadRune()
+	lex.currentRune, err = lex.ReadNextRune()
 
 	if err != nil && err.Error() == "EOF" {
 		lex.eof = true

@@ -6,7 +6,6 @@ import "fmt"
 
 type LabelOp struct {
 	BaseNode
-	entries []Node
 }
 
 func NewLabelOp(line int, position int) *LabelOp {
@@ -17,13 +16,9 @@ func (op *LabelOp) String() string {
 	return "Label Operator"
 }
 
-func (op *LabelOp) AppendNode(n Node) {
-	op.entries = append(op.entries, n)
-}
-
 // Interface Node
-func (op *LabelOp) QuotedValue() Node {
-	return NewAtom("label", op.Line(), op.Position())
+func (op *LabelOp) NodeType() string {
+	return "Label Function"
 }
 
 func (op *LabelOp) Line() int {
@@ -34,24 +29,29 @@ func (op *LabelOp) Position() int {
 	return op.BaseNode.Position
 }
 
-func (op *LabelOp) Children() []Node {
-	return op.entries
-}
-
-func (op *LabelOp) SyntaxCheck() error {
-	if len(op.entries) != 2 {
-		return fmt.Errorf("label op requires 2 arguments, line %d position %d", op.Line(), op.Position())
+func (op *LabelOp) Run(args []Node, env *Env) (Node, error) {
+	// Only one argument for quote
+	if len(args) != 2 {
+		return nil, fmt.Errorf("label operator requires 2 arguments")
 	}
 
-	labelNode := op.entries[0]
+	var labelAtom *Atom
+	var ok bool
 
-	if _, ok := labelNode.(*Atom); !ok {
-		return fmt.Errorf("label op first arg must be an atom, line %d position %d", op.Line(), op.Position())
+	if labelAtom, ok = args[0].(*Atom); !ok {
+		return nil, fmt.Errorf("label op expects first argument to be an atom")
 	}
 
-	return nil
-}
+	expr, err := EvaluateNode(args[1], env, false)
 
-func (op *LabelOp) Evaluate() (Node, error) {
-	return nil, nil
+	if err != nil {
+		return nil, fmt.Errorf("error evaluating 2nd argument to label: %s", err)
+	}
+
+	if _, ok := expr.(LispFunction); !ok {
+		return nil, fmt.Errorf("label op expects 2nd argument to be a function")
+	}
+
+	env.addSymbol(labelAtom.Name, expr)
+	return NilAtom(), nil
 }
