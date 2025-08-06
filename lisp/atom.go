@@ -40,7 +40,7 @@ func (atom *Atom) Evaluate(env *Env, inQuote bool) (Node, error) {
 	retNode := env.getSymbol(atom.Name)
 
 	if retNode == nil {
-		return nil, fmt.Errorf("Atom \"%s\" has no value (line %d, position %d)", atom.Name, atom.Line(), atom.Position())
+		return nil, NewLispError(fmt.Sprintf("Atom \"%s\" has no value", atom.Name), atom.Line(), atom.Position(), nil)
 	}
 
 	return retNode, nil
