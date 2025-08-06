@@ -1,7 +1,5 @@
 package lisp
 
-import "fmt"
-
 // A List
 
 type AtomOp struct {
@@ -32,7 +30,7 @@ func (op *AtomOp) Position() int {
 func (op *AtomOp) Run(args []Node, env *Env) (Node, error) {
 	// Only one argument for quote
 	if len(args) != 1 {
-		return nil, fmt.Errorf("atom operator requires only 1 argument")
+		return nil, NewLispError("atom operator requires only 1 argument", op.Line(), op.Position(), nil)
 	}
 
 	retNode, err := EvaluateNode(args[0], env, false)
