@@ -1,7 +1,5 @@
 package lisp
 
-import "fmt"
-
 // A List
 
 type CdrOp struct {
@@ -32,7 +30,7 @@ func (op *CdrOp) Position() int {
 func (op *CdrOp) Run(args []Node, env *Env) (Node, error) {
 	// Only one argument for quote
 	if len(args) != 1 {
-		return nil, fmt.Errorf("cdr operator requires only 1 argument")
+		return nil, NewSimpleLispError("cdr operator requires only 1 argument")
 	}
 
 	retNode, err := EvaluateNode(args[0], env, false)
@@ -56,5 +54,5 @@ func (op *CdrOp) Run(args []Node, env *Env) (Node, error) {
 		return retList, nil
 	}
 
-	return nil, fmt.Errorf("cdr operator requires a list as its argument")
+	return nil, NewSimpleLispError("cdr operator requires a list as its argument")
 }

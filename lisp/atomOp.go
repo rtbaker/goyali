@@ -30,7 +30,7 @@ func (op *AtomOp) Position() int {
 func (op *AtomOp) Run(args []Node, env *Env) (Node, error) {
 	// Only one argument for quote
 	if len(args) != 1 {
-		return nil, NewLispError("atom operator requires only 1 argument", op.Line(), op.Position(), nil)
+		return nil, NewSimpleLispError("atom operator requires only 1 argument")
 	}
 
 	retNode, err := EvaluateNode(args[0], env, false)
@@ -39,14 +39,8 @@ func (op *AtomOp) Run(args []Node, env *Env) (Node, error) {
 		return nil, err
 	}
 
-	if NodeIsAtom(retNode) {
+	if NodeIsAtom(retNode) || NodeIsEmptyList(retNode) {
 		return Truth(), nil
-	}
-
-	if listVal, ok := retNode.(*List); ok {
-		if listVal.isEmptyList() {
-			return Truth(), nil
-		}
 	}
 
 	return Falsity(), nil

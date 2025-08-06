@@ -1,7 +1,5 @@
 package lisp
 
-import "fmt"
-
 // A List
 
 type CarOp struct {
@@ -32,7 +30,7 @@ func (op *CarOp) Position() int {
 func (op *CarOp) Run(args []Node, env *Env) (Node, error) {
 	// Only one argument for quote
 	if len(args) != 1 {
-		return nil, fmt.Errorf("car operator requires only 1 argument")
+		return nil, NewSimpleLispError("car operator requires only 1 argument")
 	}
 
 	retNode, err := EvaluateNode(args[0], env, false)
@@ -50,5 +48,5 @@ func (op *CarOp) Run(args []Node, env *Env) (Node, error) {
 		return listNode.Children()[0], nil
 	}
 
-	return nil, fmt.Errorf("car operator requires a list as its argument")
+	return nil, NewSimpleLispError("car operator requires a list as its argument")
 }

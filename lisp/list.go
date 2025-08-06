@@ -75,18 +75,18 @@ func (list *List) Evaluate(env *Env, inQuote bool) (Node, error) {
 	eFirstNode, err := EvaluateNode(firstNode, env, inQuote)
 
 	if err != nil {
-		return nil, fmt.Errorf("%s\nevaluating first list item (line %d, position %d)", err, firstNode.Line(), firstNode.Position())
+		return nil, NewLispError("evaluating first list item", firstNode.Line(), firstNode.Position(), err)
 	}
 
 	if lFunc, ok := eFirstNode.(LispFunction); ok {
 		retNode, err := lFunc.Run(list.entries[1:], env)
 
 		if err != nil {
-			return nil, fmt.Errorf("%s\n%s (line %d, position %d)", err, eFirstNode.NodeType(), firstNode.Line(), firstNode.Position())
+			return nil, NewLispError(fmt.Sprintf("%s", eFirstNode.NodeType()), firstNode.Line(), firstNode.Position(), err)
 		}
 
 		return retNode, nil
 	} else {
-		return nil, fmt.Errorf("undefined function %s, line %d, position %d", firstNode, firstNode.Line(), firstNode.Position())
+		return nil, NewLispError(fmt.Sprintf("undefined function %s", eFirstNode), firstNode.Line(), firstNode.Position(), nil)
 	}
 }

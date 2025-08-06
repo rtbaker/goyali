@@ -1,7 +1,5 @@
 package lisp
 
-import "fmt"
-
 // A List
 
 type CondOp struct {
@@ -36,16 +34,16 @@ func (op *CondOp) Run(args []Node, env *Env) (Node, error) {
 		var ok bool
 
 		if listArg, ok = arg.(*List); !ok {
-			return nil, fmt.Errorf("argument to cond must be a list, line %d, position %d", arg.Line(), arg.Position())
+			return nil, NewLispError("argument to cond must be a list", arg.Line(), arg.Position(), nil)
 		}
 
 		if len(listArg.Children()) != 2 {
-			return nil, fmt.Errorf("cond argument must be a list of 2 items, test and expression, line %d, position %d", arg.Line(), arg.Position())
+			return nil, NewLispError("cond argument must be a list of 2 items, test and expression", arg.Line(), arg.Position(), nil)
 		}
 
 		retNode1, err := EvaluateNode(listArg.Children()[0], env, false)
 		if err != nil {
-			return nil, err
+			return nil, NewLispError("cannot evaluate first argument", listArg.Children()[0].Line(), listArg.Children()[0].Position(), err)
 		}
 
 		if !IsTrue(retNode1) {
@@ -55,7 +53,7 @@ func (op *CondOp) Run(args []Node, env *Env) (Node, error) {
 		retNode2, err := EvaluateNode(listArg.Children()[1], env, false)
 
 		if err != nil {
-			return nil, err
+			return nil, NewLispError("cannot evaluate second argument", listArg.Children()[1].Line(), listArg.Children()[1].Position(), err)
 		}
 
 		return retNode2, nil

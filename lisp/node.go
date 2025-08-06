@@ -54,10 +54,10 @@ func Falsity() Node {
 }
 
 func IsFalse(n Node) bool {
-	return IsEmptyList(n)
+	return NodeIsEmptyList(n)
 }
 
-func IsEmptyList(n Node) bool {
+func NodeIsEmptyList(n Node) bool {
 	if nodeList, ok := n.(*List); ok {
 		return len(nodeList.entries) == 0
 	}

@@ -29,5 +29,5 @@ func EvaluateNode(node Node, env *Env, inQuote bool) (Node, error) {
 		return resultNode, nil
 	}
 
-	return nil, fmt.Errorf("cannot evaluate a %s node at line %d, position %d", node.NodeType(), node.Line(), node.Position())
+	return nil, NewLispError(fmt.Sprintf("cannot evaluate a %s node", node.NodeType()), node.Line(), node.Position(), nil)
 }
