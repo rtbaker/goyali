@@ -34,6 +34,11 @@ func NewLexer(input io.Reader) *Lexer {
 	return l
 }
 
+func (lex *Lexer) ResetLineNos() {
+	lex.pos = 0
+	lex.line = 1
+}
+
 func (lex *Lexer) ReadNextRune() (rune, error) {
 	lex.pos++
 
@@ -56,7 +61,6 @@ func (lex *Lexer) ReadNextRune() (rune, error) {
 	if current == '\n' {
 		lex.line++
 		lex.pos = 1
-		return ' ', nil
 	}
 
 	return current, nil
@@ -103,8 +107,8 @@ func (lex *Lexer) GetToken() (*Token, error) {
 		return nil, err
 	}
 
-	// Is alpha
-	if unicode.IsLetter(lex.currentRune) {
+	// Is alpha (and '.')
+	if unicode.IsLetter(lex.currentRune) || lex.currentRune == '.' {
 		tok.Code = ATOM
 		tok.Line = lex.line
 		tok.Position = lex.pos
@@ -113,7 +117,7 @@ func (lex *Lexer) GetToken() (*Token, error) {
 
 		// Slurp letters and numbers up to something else
 		lex.currentRune, err = lex.ReadNextRune()
-		for unicode.IsLetter(lex.currentRune) && err == nil {
+		for unicode.IsLetter(lex.currentRune) || lex.currentRune == '.' && err == nil {
 			str = str + string(lex.currentRune)
 			lex.currentRune, err = lex.ReadNextRune()
 		}
@@ -146,6 +150,12 @@ func (lex *Lexer) GetToken() (*Token, error) {
 		tok.Code = OPENPARENS
 	case ')':
 		tok.Code = CLOSEPARENS
+	case ';':
+		err := lex.slurpToEOL()
+		if err != nil {
+			return nil, err
+		}
+		return lex.GetToken()
 	default:
 		return nil, fmt.Errorf("unrecognised token: %q", lex.currentRune)
 	}
@@ -161,4 +171,25 @@ func (lex *Lexer) GetToken() (*Token, error) {
 	}
 
 	return tok, nil
+}
+
+// remove all chars to end of line
+func (lex *Lexer) slurpToEOL() error {
+	var err error
+
+	for lex.currentRune, err = lex.ReadNextRune(); lex.currentRune != '\n' && err == nil; {
+		lex.currentRune, err = lex.ReadNextRune()
+	}
+
+	if err != nil && err.Error() == "EOF" {
+		lex.eof = true
+		return nil
+	}
+
+	// Otherwise an error reading the next rune when slurping whitespace
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

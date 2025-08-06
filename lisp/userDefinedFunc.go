@@ -61,7 +61,7 @@ func (op *UserDefinedFunc) Run(args []Node, env *Env) (Node, error) {
 		argValue, err := EvaluateNode(args[i], funcEnv, false)
 
 		if err != nil {
-			return nil, fmt.Errorf("error evaluating argument to function (argument %d)", i)
+			return nil, fmt.Errorf("error evaluating argument to function (argument %d): %s", i, err)
 		}
 
 		// we check these were atoms so no need to check again

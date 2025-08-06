@@ -28,6 +28,7 @@ func TestSingleCharSymbols(t *testing.T) {
 
 		if err != nil {
 			t.Errorf("Lexer GetToken returned an error: %s", err)
+			return
 		}
 
 		if token.Code != table.tok.Code {
@@ -44,6 +45,7 @@ func TestEmptyString(t *testing.T) {
 
 	if err != nil {
 		t.Errorf("Lexer GetToken returned an error: %s", err)
+		return
 	}
 
 	if token.Code != EOF {
@@ -119,6 +121,7 @@ func TestAtom(t *testing.T) {
 
 	if err != nil {
 		t.Errorf("Lexer GetToken returned an error: %s", err)
+		return
 	}
 
 	expected := Token{Code: ATOM, Value: "somestring"}
@@ -148,6 +151,7 @@ func TestEOFAfterMultipleTokens(t *testing.T) {
 
 	if err != nil {
 		t.Errorf("Reading multiple tokens returned an error: %s", err)
+		return
 	}
 
 	// Last token should be EOF
@@ -166,5 +170,49 @@ func TestChar(t *testing.T) {
 		t.Errorf("Lexer GetToken should have returned an error but did not")
 	} else if err.Error() != "unrecognised token: '@'" {
 		t.Errorf("Lexer GetToken did not return the correct error string: %s", err)
+	}
+}
+
+func TestComment(t *testing.T) {
+	reader := strings.NewReader("somestring ;followed by a comment\n; whole line comment\nsomeotherstring")
+	lex := NewLexer(reader)
+
+	token, err := lex.GetToken()
+
+	if err != nil {
+		t.Errorf("Lexer GetToken returned an error: %s", err)
+	}
+
+	expected := Token{Code: ATOM, Value: "somestring"}
+
+	if *token != expected {
+		if token.Code != expected.Code {
+			t.Errorf("Lexer GetToken did not return String Token: got %d ", token.Code)
+			return
+		}
+
+		if token.Value != expected.Value {
+			t.Errorf("Lexer did not return correct in value (expected 'somestring') got %s", token.Value)
+			return
+		}
+	}
+
+	token, err = lex.GetToken()
+
+	if err != nil {
+		t.Errorf("Lexer GetToken returned an error: %s", err)
+		return
+	}
+
+	expected = Token{Code: ATOM, Value: "someotherstring"}
+
+	if *token != expected {
+		if token.Code != expected.Code {
+			t.Errorf("Lexer GetToken did not return String Token: got %d ", token.Code)
+		}
+
+		if token.Value != expected.Value {
+			t.Errorf("Lexer did not return correct in value (expected 'someotherstring') got %s", token.Value)
+		}
 	}
 }
