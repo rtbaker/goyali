@@ -4,6 +4,15 @@ Go Yet Another Lisp Interpreter
 
 Based on https://paulgraham.com/rootsoflisp.html.
 
+No type system (yet).
+
+## Build ##
+
+`go build -o goyali main.go`
+
+## Use ##
+
+`goyali --lib=./lib`
 
 ### Run Tests ###
 
@@ -13,13 +22,11 @@ Show coverage report:
 
 `go tool cover -html=cover.out`
 
-## Grammar ##
+### Todo ###
 
-program -> expressions
-expressions -> expressions expression | [EMPTY]
-expression -> list | atom
-list -> '(' expressions ')'
-atom -> [SEQUENCE OF LETTERS]
+- Better error handling
+- Type system
+- Better interactive CLI
 
 
 
