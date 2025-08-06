@@ -12,17 +12,27 @@ import (
 	"github.com/rtbaker/goyali/lisp"
 )
 
-type LispTest struct {
-	Name     string
-	Code     string
-	Filename string
-}
+var usage string = `%s [OPTION] [FILE]
+Run lisp interpreter on FILE or if FILE not specified run interactively.
+
+Options
+  --help			Show this message.
+  --lib=DIRECTORY		Load all *.lisp files in DIRECTORY before running.
+`
 
 func main() {
 	var libraryDir string
 	flag.StringVar(&libraryDir, "lib", "", "Directory to preload *.lisp files from")
 
+	var showUsage bool
+	flag.BoolVar(&showUsage, "help", false, "Show the usage message")
+
 	flag.Parse()
+
+	if showUsage {
+		fmt.Printf(usage, os.Args[0])
+		os.Exit(0)
+	}
 
 	// Setup top level env/symbol table
 	env := lisp.NewEnv(nil)
@@ -37,7 +47,58 @@ func main() {
 		}
 	}
 
-	runInteractive(env)
+	remainingArgs := len(flag.Args())
+
+	if remainingArgs > 1 {
+		fmt.Printf(usage, os.Args[0])
+		os.Exit(1)
+	}
+
+	if remainingArgs == 1 {
+		err := runFile(env, flag.Args()[0])
+
+		if err != nil {
+			fmt.Printf("%s\n", err)
+			os.Exit(1)
+		}
+	} else {
+		runInteractive(env)
+	}
+
+	os.Exit(0)
+}
+
+func runFile(env *lisp.Env, filename string) error {
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		return fmt.Errorf("no such file: %s", filename)
+	}
+
+	dat, err := os.ReadFile(filename)
+
+	if err != nil {
+		return err
+	}
+
+	lex := lexer.NewLexer(strings.NewReader(string(dat)))
+
+	myParser := lisp.NewParser(lex)
+	program, err := myParser.ParseProgram()
+
+	if err != nil {
+		return err
+	}
+
+	for _, expression := range program.Expressions {
+		node, err := lisp.EvaluateNode(expression, env, false)
+
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("%s\n", node)
+	}
+
+	return nil
 }
 
 func preloadDirectory(env *lisp.Env, directory string) error {
