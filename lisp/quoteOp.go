@@ -1,7 +1,5 @@
 package lisp
 
-import "fmt"
-
 // A List
 
 type QuoteOp struct {
@@ -32,7 +30,7 @@ func (op *QuoteOp) Position() int {
 func (op *QuoteOp) Run(args []Node, env *Env) (Node, error) {
 	// Only one argument for quote
 	if len(args) != 1 {
-		return nil, fmt.Errorf("quote operator requires only 1 argument")
+		return nil, NewSimpleLispError("quote operator requires only 1 argument")
 	}
 
 	retNode, err := EvaluateNode(args[0], env, true)

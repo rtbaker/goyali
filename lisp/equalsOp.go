@@ -1,7 +1,5 @@
 package lisp
 
-import "fmt"
-
 // A List
 
 type EqualsOp struct {
@@ -32,7 +30,7 @@ func (op *EqualsOp) Position() int {
 func (op *EqualsOp) Run(args []Node, env *Env) (Node, error) {
 	// Only one argument for quote
 	if len(args) != 2 {
-		return nil, fmt.Errorf("equals operator requires 2 arguments")
+		return nil, NewSimpleLispError("equals operator requires 2 arguments")
 	}
 
 	retNode1, err := EvaluateNode(args[0], env, false)
@@ -44,7 +42,7 @@ func (op *EqualsOp) Run(args []Node, env *Env) (Node, error) {
 	retNode2, err := EvaluateNode(args[1], env, false)
 
 	if err != nil {
-		return nil, err
+		return nil, NewLispError("cannot evaluate first argument", 0, 0, err)
 	}
 
 	// Both the same atom?

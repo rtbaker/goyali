@@ -51,7 +51,7 @@ func (op *UserDefinedFunc) Position() int {
 
 func (op *UserDefinedFunc) Run(args []Node, env *Env) (Node, error) {
 	if len(args) != len(op.args) {
-		return nil, fmt.Errorf("wring number of arguments to function, %d required, %d given", len(op.args), len(args))
+		return nil, NewSimpleLispError(fmt.Sprintf("wrong number of arguments to function, %d required, %d given", len(op.args), len(args)))
 	}
 
 	// create the symbol table for this run
@@ -61,7 +61,7 @@ func (op *UserDefinedFunc) Run(args []Node, env *Env) (Node, error) {
 		argValue, err := EvaluateNode(args[i], funcEnv, false)
 
 		if err != nil {
-			return nil, fmt.Errorf("error evaluating argument to function (argument %d): %s", i, err)
+			return nil, NewLispError(fmt.Sprintf("error evaluating argument to function (argument %d)", i), args[i].Line(), args[i].Position(), err)
 		}
 
 		// we check these were atoms so no need to check again

@@ -1,7 +1,5 @@
 package lisp
 
-import "fmt"
-
 type DefunOp struct {
 	BaseNode
 }
@@ -29,14 +27,14 @@ func (op *DefunOp) Position() int {
 
 func (op *DefunOp) Run(args []Node, env *Env) (Node, error) {
 	if len(args) != 3 {
-		return nil, fmt.Errorf("defun operator requires 3 arguments")
+		return nil, NewSimpleLispError("defun operator requires 3 arguments")
 	}
 
 	var labelAtom *Atom
 	var ok bool
 
 	if labelAtom, ok = args[0].(*Atom); !ok {
-		return nil, fmt.Errorf("defun op expects first argument to be an atom")
+		return nil, NewSimpleLispError("defun op expects first argument to be an atom")
 	}
 
 	userFunc, err := NewUserDefinedFunc(args[1], args[2])

@@ -1,7 +1,5 @@
 package lisp
 
-import "fmt"
-
 // A List
 
 type ConsOp struct {
@@ -32,7 +30,7 @@ func (op *ConsOp) Position() int {
 func (op *ConsOp) Run(args []Node, env *Env) (Node, error) {
 	// Only one argument for quote
 	if len(args) != 2 {
-		return nil, fmt.Errorf("cons operator requires 2 arguments")
+		return nil, NewSimpleLispError("cons operator requires 2 arguments")
 	}
 
 	retNode1, err := EvaluateNode(args[0], env, false)
@@ -52,7 +50,7 @@ func (op *ConsOp) Run(args []Node, env *Env) (Node, error) {
 	var ok bool
 
 	if listArg, ok = retNode2.(*List); !ok {
-		return nil, fmt.Errorf("cons operator requires a list for the second argument")
+		return nil, NewSimpleLispError("cons operator requires a list for the second argument")
 	}
 
 	retList := NewList(0, 0)
