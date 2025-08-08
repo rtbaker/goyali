@@ -151,6 +151,8 @@ func preloadFile(env *lisp.Env, filename string) error {
 	return nil
 }
 
+var listEndError string = "list end error: expected token code: CLOSEPARENS, got EOF"
+
 func runInteractive(env *lisp.Env) {
 	var node lisp.Node
 	var err error
@@ -179,9 +181,17 @@ func runInteractive(env *lisp.Env) {
 		node, err = myParser.GetExpression()
 
 		if err != nil {
+			if strings.HasPrefix(err.Error(), listEndError) {
+				// Multi line expression
+				rl.SetPrompt(">>> ")
+				continue
+			}
+
 			fmt.Printf("error: %s\n", err)
+			rl.SetPrompt("> ")
 			builder.Reset()
 			lex.ResetLineNos()
+
 			continue
 		}
 
@@ -196,6 +206,7 @@ func runInteractive(env *lisp.Env) {
 				fmt.Printf("%s\n", resultNode)
 			}
 
+			rl.SetPrompt("> ")
 			builder.Reset()
 			lex.ResetLineNos()
 		}
