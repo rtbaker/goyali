@@ -1,8 +1,8 @@
 # goyali
 
-Go Yet Another Lisp Interpreter
+GOlang Yet Another Lisp Interpreter
 
-Based on https://paulgraham.com/rootsoflisp.html.
+A simple lisp based on https://paulgraham.com/rootsoflisp.html.
 
 No type system (yet).
 
@@ -15,6 +15,10 @@ No type system (yet).
 `goyali --lib=./lib`
 
 ### Run Tests ###
+
+`go test ./...`
+
+Coverage:
 
 `go test -v -coverprofile cover.out  ./...`
 

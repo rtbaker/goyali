@@ -85,6 +85,10 @@ func (list *List) Evaluate(env *Env, inQuote bool) (Node, error) {
 			return nil, NewLispError(fmt.Sprintf("%s", eFirstNode.NodeType()), firstNode.Line(), firstNode.Position(), err)
 		}
 
+		if retNode == nil {
+			retNode = NilAtom()
+		}
+
 		return retNode, nil
 	} else {
 		return nil, NewLispError(fmt.Sprintf("undefined function %s", eFirstNode), firstNode.Line(), firstNode.Position(), nil)
